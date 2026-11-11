@@ -29,6 +29,7 @@ class Empire_Carrier_Prequal_Manager {
         add_filter( 'request', array( $this, 'prevent_wp_reserved_var_collision' ), 1 );
         add_filter( 'the_content', array( $this, 'preserve_inline_scripts' ), 999 );
         add_action( 'wp_head', array( $this, 'inject_ga4_tracking_code' ), 1 );
+        add_action( 'wp_dashboard_setup', array( $this, 'register_dashboard_widgets' ) );
     }
 
     /**
@@ -473,13 +474,24 @@ class Empire_Carrier_Prequal_Manager {
     }
 
     public function register_admin_menus() {
+        // High-visibility top-level menu right below Dashboard (position 2)
+        add_menu_page(
+            '⚡ Live Analytics',
+            '⚡ Live Analytics',
+            'manage_options',
+            'carrier-prequal-analytics-guide',
+            array( $this, 'render_realtime_dashboard_page' ),
+            'dashicons-chart-area',
+            2
+        );
+
         add_menu_page(
             'Carrier Prequal Leads',
             'Prequal Leads',
             'manage_options',
             'carrier-prequal-leads',
             array( $this, 'render_admin_dashboard' ),
-            'dashicons-chart-area',
+            'dashicons-clipboard',
             21
         );
 
@@ -1108,6 +1120,143 @@ class Empire_Carrier_Prequal_Manager {
 
     public function render_analytics_guide_page() {
         $this->render_realtime_dashboard_page();
+    }
+
+    /**
+     * Register the Realtime Analytics Dashboard widget on wp-admin/index.php
+     */
+    public function register_dashboard_widgets() {
+        if ( ! current_user_can( 'manage_options' ) ) {
+            return;
+        }
+        wp_add_dashboard_widget(
+            'empire_prequal_analytics_widget',
+            '⚡ Empire Dispatch — Realtime Analytics & Live Inflow',
+            array( $this, 'render_dashboard_widget' )
+        );
+    }
+
+    /**
+     * Render the Live Realtime Analytics Widget on the main WordPress Home Dashboard (index.php)
+     */
+    public function render_dashboard_widget() {
+        global $wpdb;
+        $table_name = self::get_table_name();
+
+        $thirty_mins_ago = gmdate( 'Y-m-d H:i:s', time() - 1800 );
+        $active_30m = (int) $wpdb->get_var( $wpdb->prepare(
+            "SELECT COUNT(*) FROM $table_name WHERE submission_time >= %s",
+            $thirty_mins_ago
+        ) );
+
+        $today_count = (int) $wpdb->get_var(
+            "SELECT COUNT(*) FROM $table_name WHERE DATE(submission_time) = CURDATE()"
+        );
+
+        $total_count = (int) $wpdb->get_var( "SELECT COUNT(*) FROM $table_name" );
+
+        $summar_count = (int) $wpdb->get_var(
+            "SELECT COUNT(*) FROM $table_name WHERE matched_partner = 'SUMMAR'"
+        );
+
+        $basicblock_count = (int) $wpdb->get_var(
+            "SELECT COUNT(*) FROM $table_name WHERE matched_partner = 'BASICBLOCK'"
+        );
+
+        $recent_items = $wpdb->get_results(
+            "SELECT id, submission_time, first_name, company_name, mc_number, matched_partner, lead_status 
+             FROM $table_name 
+             ORDER BY id DESC LIMIT 5",
+            ARRAY_A
+        );
+
+        $ga4_realtime_url = 'https://analytics.google.com/analytics/web/?pli=1&authuser=1#/a415895070p563804447/realtime/overview';
+        $full_dashboard_url = admin_url( 'admin.php?page=carrier-prequal-analytics-guide' );
+        ?>
+        <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; color:#0f172a;">
+            
+            <!-- Pulse Banner & Live Status -->
+            <div style="display:flex; justify-content:space-between; align-items:center; background:#ecfdf5; border:1px solid #a7f3d0; border-radius:8px; padding:8px 12px; margin-bottom:14px;">
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <span style="display:inline-block; width:9px; height:9px; border-radius:50%; background:#10b981; box-shadow:0 0 0 3px rgba(16,185,129,0.3);"></span>
+                    <span style="font-size:12px; font-weight:700; color:#065f46; text-transform:uppercase; letter-spacing:0.04em;">GA4 Realtime & Telemetry Active</span>
+                </div>
+                <span style="font-size:11px; color:#059669; font-weight:600;">Stream G-8YQR90ZFWQ</span>
+            </div>
+
+            <!-- KPI Metric Tiles Grid -->
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px;">
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:12px 14px;">
+                    <div style="font-size:11px; font-weight:600; color:#64748b; text-transform:uppercase;">Active (30 Mins)</div>
+                    <div style="font-size:24px; font-weight:800; color:#10b981; margin-top:2px; line-height:1.2;"><?php echo $active_30m; ?></div>
+                    <div style="font-size:10px; color:#10b981; margin-top:4px; font-weight:600;">Live visitors / clicks</div>
+                </div>
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:12px 14px;">
+                    <div style="font-size:11px; font-weight:600; color:#64748b; text-transform:uppercase;">Today's Leads</div>
+                    <div style="font-size:24px; font-weight:800; color:#0284c7; margin-top:2px; line-height:1.2;"><?php echo $today_count; ?></div>
+                    <div style="font-size:10px; color:#64748b; margin-top:4px;">All-time: <strong><?php echo $total_count; ?></strong></div>
+                </div>
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:12px 14px;">
+                    <div style="font-size:11px; font-weight:600; color:#64748b; text-transform:uppercase;">Summar Match</div>
+                    <div style="font-size:20px; font-weight:800; color:#059669; margin-top:2px;"><?php echo $summar_count; ?></div>
+                    <div style="font-size:10px; color:#64748b;">Enterprise (>90d)</div>
+                </div>
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:12px 14px;">
+                    <div style="font-size:11px; font-weight:600; color:#64748b; text-transform:uppercase;">BasicBlock Match</div>
+                    <div style="font-size:20px; font-weight:800; color:#6366f1; margin-top:2px;"><?php echo $basicblock_count; ?></div>
+                    <div style="font-size:10px; color:#64748b;">Fast Pay (<90d)</div>
+                </div>
+            </div>
+
+            <!-- Recent Activity Table -->
+            <div style="margin-bottom:14px;">
+                <div style="font-size:11px; font-weight:700; color:#475569; text-transform:uppercase; margin-bottom:6px; letter-spacing:0.03em;">Recent Carrier Submissions</div>
+                <?php if ( empty( $recent_items ) ) : ?>
+                    <p style="font-size:12px; color:#94a3b8; font-style:italic; margin:4px 0;">No submissions yet today.</p>
+                <?php else : ?>
+                    <table style="width:100%; border-collapse:collapse; font-size:12px;">
+                        <thead>
+                            <tr style="border-bottom:1px solid #e2e8f0; text-align:left; color:#64748b;">
+                                <th style="padding:4px 0;">Time</th>
+                                <th style="padding:4px 0;">Carrier / MC</th>
+                                <th style="padding:4px 0; text-align:right;">Partner</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ( $recent_items as $item ) : ?>
+                                <tr style="border-bottom:1px solid #f1f5f9;">
+                                    <td style="padding:6px 0; color:#64748b; font-size:11px;"><?php echo esc_html( date( 'M j, H:i', strtotime( $item['submission_time'] ) ) ); ?></td>
+                                    <td style="padding:6px 0; font-weight:600; color:#0f172a;">
+                                        <?php echo esc_html( $item['company_name'] ?: $item['first_name'] ); ?>
+                                        <span style="font-size:10px; color:#64748b; font-family:monospace;">(<?php echo esc_html( $item['mc_number'] ?: 'N/A' ); ?>)</span>
+                                    </td>
+                                    <td style="padding:6px 0; text-align:right;">
+                                        <?php if ( $item['matched_partner'] === 'SUMMAR' ) : ?>
+                                            <span style="background:#ecfdf5; color:#065f46; font-size:10px; font-weight:700; padding:2px 6px; border-radius:4px;">SUMMAR</span>
+                                        <?php elseif ( $item['matched_partner'] === 'BASICBLOCK' ) : ?>
+                                            <span style="background:#eef2ff; color:#3730a3; font-size:10px; font-weight:700; padding:2px 6px; border-radius:4px;">BASICBLOCK</span>
+                                        <?php else : ?>
+                                            <span style="background:#f1f5f9; color:#475569; font-size:10px; padding:2px 6px; border-radius:4px;"><?php echo esc_html( $item['matched_partner'] ?: 'MANUAL' ); ?></span>
+                                        <?php endif; ?>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                <?php endif; ?>
+            </div>
+
+            <!-- Action Buttons -->
+            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; padding-top:10px; border-top:1px solid #f1f5f9;">
+                <a href="<?php echo esc_url( $full_dashboard_url ); ?>" class="button button-primary" style="flex:1; text-align:center; justify-content:center; background:#0284c7; border-color:#0284c7; font-weight:600;">
+                    📊 Open Live Telemetry
+                </a>
+                <a href="<?php echo esc_url( $ga4_realtime_url ); ?>" target="_blank" rel="noopener noreferrer" class="button" style="flex:1; text-align:center; justify-content:center; background:#f8fafc; border-color:#cbd5e1; color:#0f172a; font-weight:600;">
+                    🚀 GA4 Realtime Feed &nearr;
+                </a>
+            </div>
+        </div>
+        <?php
     }
 
     /**

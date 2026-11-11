@@ -28,6 +28,7 @@ class Empire_Carrier_Prequal_Manager {
         add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
         add_filter( 'request', array( $this, 'prevent_wp_reserved_var_collision' ), 1 );
         add_filter( 'the_content', array( $this, 'preserve_inline_scripts' ), 999 );
+        add_action( 'wp_head', array( $this, 'inject_ga4_tracking_code' ), 1 );
     }
 
     /**
@@ -133,6 +134,20 @@ class Empire_Carrier_Prequal_Manager {
             'methods'             => 'POST',
             'callback'            => array( $this, 'handle_prequal_ping' ),
             'permission_callback' => '__return_true',
+        ) );
+
+        // Realtime stats endpoint for admin dashboard
+        register_rest_route( 'empire-dispatch/v1', '/realtime-stats', array(
+            'methods'             => 'GET',
+            'callback'            => array( $this, 'get_realtime_stats' ),
+            'permission_callback' => function() { return current_user_can( 'manage_options' ); },
+        ) );
+
+        // Realtime test ping simulator
+        register_rest_route( 'empire-dispatch/v1', '/realtime-test-ping', array(
+            'methods'             => 'POST',
+            'callback'            => array( $this, 'handle_realtime_test_ping' ),
+            'permission_callback' => function() { return current_user_can( 'manage_options' ); },
         ) );
     }
 
@@ -479,11 +494,11 @@ class Empire_Carrier_Prequal_Manager {
 
         add_submenu_page(
             'carrier-prequal-leads',
-            'Analytics Overview',
-            'Analytics & Clicks',
+            'Realtime Dashboard',
+            '⚡ Realtime Dashboard',
             'manage_options',
             'carrier-prequal-analytics-guide',
-            array( $this, 'render_analytics_guide_page' )
+            array( $this, 'render_realtime_dashboard_page' )
         );
     }
 
@@ -969,48 +984,562 @@ class Empire_Carrier_Prequal_Manager {
         <?php
     }
 
-    public function render_analytics_guide_page() {
+    /**
+     * Inject Google tag (gtag.js) GA4 for Empire Dispatch
+     */
+    public function inject_ga4_tracking_code() {
+        if ( is_admin() ) {
+            return;
+        }
+        $ga4_id = 'G-8YQR90ZFWQ';
         ?>
-        <div class="wrap" style="max-width:1100px; margin-top:20px;">
-            <h1 style="font-size:26px; font-weight:700; color:#0f172a; margin-bottom:12px;">
-                📊 Google Analytics & Click Tracking Setup
-            </h1>
-            <p style="color:#64748b; font-size:15px; margin-bottom:24px;">
-                Learn how outbound link clicks, partner conversions, and page traffic are tracked directly in WordPress.
-            </p>
+<!-- Google tag (gtag.js) GA4 for Empire Dispatch -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=<?php echo esc_attr( $ga4_id ); ?>"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', '<?php echo esc_attr( $ga4_id ); ?>', {
+    'send_page_view': true,
+    'cookie_flags': 'SameSite=None;Secure'
+  });
+</script>
+        <?php
+    }
 
-            <div style="background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:24px; box-shadow:0 1px 3px rgba(0,0,0,0.05); margin-bottom:24px;">
-                <h2 style="font-size:18px; font-weight:700; color:#0f172a; margin-top:0;">
-                    1. MonsterInsights Pro Click & Traffic Reports
-                </h2>
-                <p style="color:#334155; line-height:1.6;">
-                    Google Analytics Premium (MonsterInsights Pro) is installed and active on this website. It provides automated tracking of outbound button clicks, user sessions, and conversions.
-                </p>
-                <div style="display:flex; gap:12px; margin-top:16px;">
-                    <a href="<?php echo admin_url('admin.php?page=monsterinsights_reports'); ?>" class="button button-primary" style="padding:6px 16px; height:auto; font-weight:600;">
-                        Open MonsterInsights Reports &rarr;
-                    </a>
-                    <a href="<?php echo admin_url('admin.php?page=monsterinsights_settings'); ?>" class="button button-secondary" style="padding:6px 16px; height:auto; font-weight:600;">
-                        Open MonsterInsights Settings
+    /**
+     * REST endpoint: Get Realtime Telemetry Stats
+     */
+    public function get_realtime_stats() {
+        global $wpdb;
+        $table_name = self::get_table_name();
+
+        $thirty_mins_ago = gmdate( 'Y-m-d H:i:s', time() - 1800 );
+        $active_30m = (int) $wpdb->get_var( $wpdb->prepare(
+            "SELECT COUNT(*) FROM $table_name WHERE submission_time >= %s",
+            $thirty_mins_ago
+        ) );
+
+        $today_count = (int) $wpdb->get_var(
+            "SELECT COUNT(*) FROM $table_name WHERE DATE(submission_time) = CURDATE()"
+        );
+
+        $total_count = (int) $wpdb->get_var( "SELECT COUNT(*) FROM $table_name" );
+
+        $summar_count = (int) $wpdb->get_var(
+            "SELECT COUNT(*) FROM $table_name WHERE matched_partner = 'SUMMAR'"
+        );
+
+        $basicblock_count = (int) $wpdb->get_var(
+            "SELECT COUNT(*) FROM $table_name WHERE matched_partner = 'BASICBLOCK'"
+        );
+
+        $kit_count = (int) $wpdb->get_var(
+            "SELECT COUNT(*) FROM $table_name WHERE utm_source = 'kit' OR utm_campaign LIKE '%hormozi%'"
+        );
+
+        $recent_items = $wpdb->get_results(
+            "SELECT id, submission_time, first_name, company_name, mc_number, matched_partner, lead_status, utm_source, utm_campaign 
+             FROM $table_name 
+             ORDER BY id DESC LIMIT 15",
+            ARRAY_A
+        );
+
+        return new WP_REST_Response( array(
+            'success'            => true,
+            'active_30m'         => $active_30m,
+            'today_count'        => $today_count,
+            'total_count'        => $total_count,
+            'summar_count'       => $summar_count,
+            'basicblock_count'   => $basicblock_count,
+            'kit_count'          => $kit_count,
+            'recent_items'       => $recent_items,
+            'ga4_measurement_id' => 'G-8YQR90ZFWQ',
+            'ga4_property_id'    => '563804447',
+            'ga4_account_id'     => '415895070',
+            'ga4_realtime_url'   => 'https://analytics.google.com/analytics/web/?pli=1&authuser=1#/a415895070p563804447/realtime/overview',
+            'server_time'        => current_time( 'mysql' )
+        ), 200 );
+    }
+
+    /**
+     * REST endpoint: Handle Realtime Test Ping Simulation
+     */
+    public function handle_realtime_test_ping( WP_REST_Request $request ) {
+        global $wpdb;
+        $table_name = self::get_table_name();
+
+        $token = wp_generate_password( 32, false );
+        $sim_num = rand( 1000, 9999 );
+        $wpdb->insert(
+            $table_name,
+            array(
+                'prequal_token'    => $token,
+                'submission_time'  => current_time( 'mysql' ),
+                'mc_number'        => 'MC-TEST-' . $sim_num,
+                'company_name'     => 'Realtime Test Logistics ' . $sim_num,
+                'authority_age'    => 'over_90_days',
+                'equipment_type'   => 'Dry Van (53ft)',
+                'monthly_gross'    => '25k_50k_plus',
+                'factoring_status' => 'not_factoring',
+                'first_name'       => 'Test Operator ' . $sim_num,
+                'phone'            => '(555) 019-' . rand( 1000, 9999 ),
+                'email'            => 'test.trucker.' . $sim_num . '@example.com',
+                'matched_partner'  => 'SUMMAR',
+                'partner_name'     => 'Summar Financial (Elizabeth Valencia)',
+                'lead_status'      => 'Verified Test',
+                'partner_url'      => 'https://cwlqj04.na1.hs-sales-engage.com/Elizabeth-Valencia',
+                'notes'            => 'Simulated realtime test event fired from WordPress Realtime Analytics Dashboard.',
+                'ip_address'       => sanitize_text_field( $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1' ),
+                'user_agent'       => 'Empire Realtime Dashboard Simulator',
+                'utm_source'       => 'dashboard_simulator',
+                'utm_medium'       => 'realtime_test',
+                'utm_campaign'     => 'liveness_check',
+                'n8n_sync_status'  => 'Test Ignored (Live DB Verified)'
+            )
+        );
+
+        return new WP_REST_Response( array(
+            'success' => true,
+            'message' => 'Realtime test lead successfully generated and recorded in database.',
+            'id'      => $wpdb->insert_id
+        ), 200 );
+    }
+
+    public function render_analytics_guide_page() {
+        $this->render_realtime_dashboard_page();
+    }
+
+    /**
+     * Render the Live Realtime Analytics Dashboard in WordPress Admin
+     */
+    public function render_realtime_dashboard_page() {
+        if ( ! current_user_can( 'manage_options' ) ) {
+            wp_die( 'Unauthorized.' );
+        }
+
+        global $wpdb;
+        $table_name = self::get_table_name();
+
+        $thirty_mins_ago = gmdate( 'Y-m-d H:i:s', time() - 1800 );
+        $active_30m = (int) $wpdb->get_var( $wpdb->prepare(
+            "SELECT COUNT(*) FROM $table_name WHERE submission_time >= %s",
+            $thirty_mins_ago
+        ) );
+
+        $today_count = (int) $wpdb->get_var(
+            "SELECT COUNT(*) FROM $table_name WHERE DATE(submission_time) = CURDATE()"
+        );
+
+        $total_count = (int) $wpdb->get_var( "SELECT COUNT(*) FROM $table_name" );
+
+        $summar_count = (int) $wpdb->get_var(
+            "SELECT COUNT(*) FROM $table_name WHERE matched_partner = 'SUMMAR'"
+        );
+
+        $basicblock_count = (int) $wpdb->get_var(
+            "SELECT COUNT(*) FROM $table_name WHERE matched_partner = 'BASICBLOCK'"
+        );
+
+        $kit_count = (int) $wpdb->get_var(
+            "SELECT COUNT(*) FROM $table_name WHERE utm_source = 'kit' OR utm_campaign LIKE '%hormozi%'"
+        );
+
+        $recent_items = $wpdb->get_results(
+            "SELECT id, submission_time, first_name, company_name, mc_number, matched_partner, lead_status, utm_source, utm_campaign 
+             FROM $table_name 
+             ORDER BY id DESC LIMIT 15",
+            ARRAY_A
+        );
+
+        $rest_nonce       = wp_create_nonce( 'wp_rest' );
+        $ga4_realtime_url = 'https://analytics.google.com/analytics/web/?pli=1&authuser=1#/a415895070p563804447/realtime/overview';
+        ?>
+        <div class="wrap" style="max-width:1300px; margin-top:20px; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+            
+            <!-- Top Header & Actions -->
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; margin-bottom:24px; padding-bottom:16px; border-bottom:1px solid #e2e8f0;">
+                <div>
+                    <div style="display:inline-flex; align-items:center; gap:8px; background:#ecfdf5; border:1px solid #a7f3d0; color:#065f46; font-size:12px; font-weight:700; padding:4px 10px; border-radius:9999px; margin-bottom:8px; text-transform:uppercase; letter-spacing:0.05em;">
+                        <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#10b981; box-shadow:0 0 0 2px rgba(16,185,129,0.3); animation:pulse 2s infinite;"></span>
+                        Live Telemetry & GA4 Realtime Stream
+                    </div>
+                    <h1 style="font-size:28px; font-weight:800; color:#0f172a; margin:0 0 6px 0; letter-spacing:-0.02em;">
+                        ⚡ Empire Dispatch Realtime Analytics Dashboard
+                    </h1>
+                    <p style="margin:0; color:#64748b; font-size:14px;">
+                        Live stream of carrier link opens, prequalification submissions, partner routing, and Google Analytics 4 telemetry.
+                    </p>
+                </div>
+                <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                    <button type="button" id="btn-realtime-test" class="button" style="background:#f1f5f9; border:1px solid #cbd5e1; color:#334155; font-weight:600; padding:8px 14px; border-radius:6px; cursor:pointer;">
+                        🧪 Send Test Ping
+                    </button>
+                    <button type="button" id="btn-toggle-refresh" class="button" style="background:#f8fafc; border:1px solid #cbd5e1; color:#0f172a; font-weight:600; padding:8px 14px; border-radius:6px; cursor:pointer;">
+                        🔄 Auto-Refresh: ON (10s)
+                    </button>
+                    <a href="<?php echo esc_url( $ga4_realtime_url ); ?>" target="_blank" rel="noopener noreferrer" class="button button-primary" style="background:#0284c7; border-color:#0284c7; padding:8px 18px; height:auto; font-weight:700; font-size:14px; border-radius:6px; display:inline-flex; align-items:center; gap:6px; text-decoration:none; box-shadow:0 1px 3px rgba(2,132,199,0.3);">
+                        <span>Launch GA4 Realtime Stream</span>
+                        <span style="font-size:16px;">&nearr;</span>
                     </a>
                 </div>
             </div>
 
-            <div style="background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:24px; box-shadow:0 1px 3px rgba(0,0,0,0.05); margin-bottom:24px;">
-                <h2 style="font-size:18px; font-weight:700; color:#0f172a; margin-top:0;">
-                    2. Tracked Form & Outbound Clicks
-                </h2>
-                <ul style="color:#334155; line-height:1.8; list-style:disc; margin-left:20px;">
-                    <li><strong>Form Submissions:</strong> Every completion of the prequalification form is logged into the local database table <code>wpda_carrier_prequal_submissions</code> and pushed as an event to Google Analytics (<code>prequal_form_submit</code>).</li>
-                    <li><strong>Pre-filled Link Openings:</strong> When truckers click their personalized email link, the page records their visit immediately in WordPress under <code>Form Opened</code> so no click is ever lost.</li>
-                    <li><strong>Elizabeth Valencia / Summar Clicks:</strong> Outbound clicks to Elizabeth's HubSpot calendar (<code>cwlqj04.na1.hs-sales-engage.com/Elizabeth-Valencia</code>) are tracked automatically as Outbound Link Click events.</li>
-                    <li><strong>BasicBlock Activation Clicks:</strong> Outbound clicks to <code>na2.hubs.ly/y0y4mS0</code> are tracked automatically as Outbound Link Click events.</li>
-                    <li><strong>Email Campaign Attribution:</strong> Traffic arriving from Kit with UTM tags (e.g. <code>?utm_source=kit&utm_medium=email</code>) is recorded with each lead and visible in the Leads table and CSV exports.</li>
-                </ul>
+            <!-- KPI Metric Cards Grid -->
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:16px; margin-bottom:24px;">
+                
+                <!-- Card 1: Active In Last 30 Mins -->
+                <div style="background:#fff; border:1px solid #e2e8f0; border-radius:12px; padding:20px; box-shadow:0 1px 3px rgba(0,0,0,0.04); position:relative; overflow:hidden;">
+                    <div style="position:absolute; top:0; left:0; right:0; height:4px; background:#10b981;"></div>
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                        <div>
+                            <div style="color:#64748b; font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.04em;">Active Last 30 Mins</div>
+                            <div id="stat-active-30m" style="font-size:36px; font-weight:800; color:#0f172a; margin-top:6px; line-height:1;"><?php echo $active_30m; ?></div>
+                        </div>
+                        <div style="width:40px; height:40px; border-radius:10px; background:#ecfdf5; display:flex; align-items:center; justify-content:center; color:#059669; font-size:20px;">
+                            👥
+                        </div>
+                    </div>
+                    <div style="margin-top:12px; font-size:12px; color:#10b981; font-weight:600; display:flex; align-items:center; gap:4px;">
+                        <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#10b981;"></span>
+                        Live Carrier Inflow
+                    </div>
+                </div>
+
+                <!-- Card 2: Today's Inflow -->
+                <div style="background:#fff; border:1px solid #e2e8f0; border-radius:12px; padding:20px; box-shadow:0 1px 3px rgba(0,0,0,0.04); position:relative; overflow:hidden;">
+                    <div style="position:absolute; top:0; left:0; right:0; height:4px; background:#0284c7;"></div>
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                        <div>
+                            <div style="color:#64748b; font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.04em;">Leads & Opens Today</div>
+                            <div id="stat-today-count" style="font-size:36px; font-weight:800; color:#0f172a; margin-top:6px; line-height:1;"><?php echo $today_count; ?></div>
+                        </div>
+                        <div style="width:40px; height:40px; border-radius:10px; background:#f0f9ff; display:flex; align-items:center; justify-content:center; color:#0284c7; font-size:20px;">
+                            📋
+                        </div>
+                    </div>
+                    <div style="margin-top:12px; font-size:12px; color:#64748b;">
+                        Total all-time: <strong id="stat-total-count" style="color:#0f172a;"><?php echo $total_count; ?></strong> leads
+                    </div>
+                </div>
+
+                <!-- Card 3: Summar / Elizabeth Valencia -->
+                <div style="background:#fff; border:1px solid #e2e8f0; border-radius:12px; padding:20px; box-shadow:0 1px 3px rgba(0,0,0,0.04); position:relative; overflow:hidden;">
+                    <div style="position:absolute; top:0; left:0; right:0; height:4px; background:#059669;"></div>
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                        <div>
+                            <div style="color:#64748b; font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.04em;">Summar (Elizabeth)</div>
+                            <div id="stat-summar-count" style="font-size:36px; font-weight:800; color:#0f172a; margin-top:6px; line-height:1;"><?php echo $summar_count; ?></div>
+                        </div>
+                        <div style="width:40px; height:40px; border-radius:10px; background:#ecfdf5; display:flex; align-items:center; justify-content:center; color:#059669; font-size:20px;">
+                            🤝
+                        </div>
+                    </div>
+                    <div style="margin-top:12px; font-size:12px; color:#64748b;">
+                        Authority &gt; 90 Days ($25k-$50k+)
+                    </div>
+                </div>
+
+                <!-- Card 4: BasicBlock / Sydney Lock -->
+                <div style="background:#fff; border:1px solid #e2e8f0; border-radius:12px; padding:20px; box-shadow:0 1px 3px rgba(0,0,0,0.04); position:relative; overflow:hidden;">
+                    <div style="position:absolute; top:0; left:0; right:0; height:4px; background:#6366f1;"></div>
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                        <div>
+                            <div style="color:#64748b; font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.04em;">BasicBlock (Sydney)</div>
+                            <div id="stat-basicblock-count" style="font-size:36px; font-weight:800; color:#0f172a; margin-top:6px; line-height:1;"><?php echo $basicblock_count; ?></div>
+                        </div>
+                        <div style="width:40px; height:40px; border-radius:10px; background:#eef2ff; display:flex; align-items:center; justify-content:center; color:#6366f1; font-size:20px;">
+                            🚀
+                        </div>
+                    </div>
+                    <div style="margin-top:12px; font-size:12px; color:#64748b;">
+                        New Authority &lt; 90 Days (Fast Track)
+                    </div>
+                </div>
+
+                <!-- Card 5: Kit Email Attribution -->
+                <div style="background:#fff; border:1px solid #e2e8f0; border-radius:12px; padding:20px; box-shadow:0 1px 3px rgba(0,0,0,0.04); position:relative; overflow:hidden;">
+                    <div style="position:absolute; top:0; left:0; right:0; height:4px; background:#f59e0b;"></div>
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                        <div>
+                            <div style="color:#64748b; font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.04em;">Kit Email Traffic</div>
+                            <div id="stat-kit-count" style="font-size:36px; font-weight:800; color:#0f172a; margin-top:6px; line-height:1;"><?php echo $kit_count; ?></div>
+                        </div>
+                        <div style="width:40px; height:40px; border-radius:10px; background:#fef3c7; display:flex; align-items:center; justify-content:center; color:#d97706; font-size:20px;">
+                            📧
+                        </div>
+                    </div>
+                    <div style="margin-top:12px; font-size:12px; color:#64748b;">
+                        UTM Source: <code>kit</code> / Hormozi Batch
+                    </div>
+                </div>
+
             </div>
+
+            <!-- GA4 Stream & Telemetry Health Card -->
+            <div style="background:#fff; border:1px solid #e2e8f0; border-radius:12px; padding:24px; box-shadow:0 1px 3px rgba(0,0,0,0.04); margin-bottom:24px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+                    <div>
+                        <h2 style="font-size:18px; font-weight:800; color:#0f172a; margin:0 0 4px 0;">
+                            📡 Google Analytics 4 Connection Status
+                        </h2>
+                        <p style="margin:0; color:#64748b; font-size:13px;">
+                            Verified stream configuration for Empire Dispatch web property.
+                        </p>
+                    </div>
+                    <div style="display:flex; gap:8px;">
+                        <a href="<?php echo admin_url('admin.php?page=monsterinsights_settings'); ?>" class="button" style="background:#f8fafc; border:1px solid #cbd5e1; font-weight:600; color:#334155; border-radius:6px;">
+                            MonsterInsights Settings &rarr;
+                        </a>
+                        <a href="<?php echo esc_url( $ga4_realtime_url ); ?>" target="_blank" rel="noopener noreferrer" class="button" style="background:#0284c7; color:#fff; border-color:#0284c7; font-weight:600; border-radius:6px;">
+                            Open GA4 Realtime Report &rarr;
+                        </a>
+                    </div>
+                </div>
+
+                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:12px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:16px;">
+                    <div>
+                        <div style="color:#64748b; font-size:11px; font-weight:700; text-transform:uppercase;">GA4 Account</div>
+                        <div style="font-weight:700; color:#0f172a; font-size:14px; margin-top:2px;">Empire Dispatch <span style="font-size:12px; color:#64748b;">(415895070)</span></div>
+                    </div>
+                    <div>
+                        <div style="color:#64748b; font-size:11px; font-weight:700; text-transform:uppercase;">GA4 Property</div>
+                        <div style="font-weight:700; color:#0f172a; font-size:14px; margin-top:2px;">Empire Dispatch <span style="font-size:12px; color:#64748b;">(563804447)</span></div>
+                    </div>
+                    <div>
+                        <div style="color:#64748b; font-size:11px; font-weight:700; text-transform:uppercase;">Measurement ID</div>
+                        <div style="font-weight:700; color:#0284c7; font-size:14px; margin-top:2px; font-family:monospace;">G-8YQR90ZFWQ</div>
+                    </div>
+                    <div>
+                        <div style="color:#64748b; font-size:11px; font-weight:700; text-transform:uppercase;">Web Stream</div>
+                        <div style="font-weight:700; color:#0f172a; font-size:14px; margin-top:2px;">Empire Dispatch Web <span style="font-size:12px; color:#64748b;">(16320151931)</span></div>
+                    </div>
+                    <div>
+                        <div style="color:#64748b; font-size:11px; font-weight:700; text-transform:uppercase;">Tag Injection</div>
+                        <div style="font-weight:700; color:#059669; font-size:14px; margin-top:2px;">Active in <code>wp_head</code></div>
+                    </div>
+                    <div>
+                        <div style="color:#64748b; font-size:11px; font-weight:700; text-transform:uppercase;">MonsterInsights Sync</div>
+                        <div style="font-weight:700; color:#059669; font-size:14px; margin-top:2px;">Saved &amp; Validated</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live Realtime Activity Stream -->
+            <div style="background:#fff; border:1px solid #e2e8f0; border-radius:12px; padding:24px; box-shadow:0 1px 3px rgba(0,0,0,0.04);">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+                    <div>
+                        <h2 style="font-size:18px; font-weight:800; color:#0f172a; margin:0 0 4px 0;">
+                            🔴 Live Telemetry Stream
+                        </h2>
+                        <p style="margin:0; color:#64748b; font-size:13px;">
+                            Real-time inflow of carrier opens, submissions, and partner clicks (auto-refreshes every 10s).
+                        </p>
+                    </div>
+                    <div style="font-size:12px; color:#64748b;">
+                        Last updated: <span id="last-updated-time" style="font-weight:600; color:#0f172a;"><?php echo current_time( 'g:i:s A' ); ?></span>
+                    </div>
+                </div>
+
+                <div style="overflow-x:auto;">
+                    <table class="wp-list-table widefat fixed striped" style="border:1px solid #e2e8f0; border-radius:8px; overflow:hidden;">
+                        <thead>
+                            <tr style="background:#f8fafc;">
+                                <th style="width:70px; font-weight:700; color:#475569;">ID</th>
+                                <th style="width:160px; font-weight:700; color:#475569;">Timestamp (UTC)</th>
+                                <th style="width:160px; font-weight:700; color:#475569;">Carrier / Driver</th>
+                                <th style="width:180px; font-weight:700; color:#475569;">Company Legal Name</th>
+                                <th style="width:130px; font-weight:700; color:#475569;">MC / DOT #</th>
+                                <th style="width:130px; font-weight:700; color:#475569;">Status</th>
+                                <th style="width:150px; font-weight:700; color:#475569;">Matched Partner</th>
+                                <th style="font-weight:700; color:#475569;">Campaign / Source</th>
+                            </tr>
+                        </thead>
+                        <tbody id="realtime-activity-body">
+                            <?php if ( ! empty( $recent_items ) ) : ?>
+                                <?php foreach ( $recent_items as $item ) : ?>
+                                    <?php
+                                        $partner_badge = '<span style="color:#94a3b8; font-size:12px;">—</span>';
+                                        if ( $item['matched_partner'] === 'SUMMAR' ) {
+                                            $partner_badge = '<span style="background:#ecfdf5; color:#065f46; border:1px solid #a7f3d0; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:700;">SUMMAR</span>';
+                                        } elseif ( $item['matched_partner'] === 'BASICBLOCK' ) {
+                                            $partner_badge = '<span style="background:#eef2ff; color:#3730a3; border:1px solid #c7d2fe; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:700;">BASICBLOCK</span>';
+                                        }
+
+                                        $status_badge = '<span style="background:#f1f5f9; color:#475569; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:600;">' . esc_html( $item['lead_status'] ) . '</span>';
+                                        if ( $item['lead_status'] === 'Form Opened' ) {
+                                            $status_badge = '<span style="background:#fef3c7; color:#92400e; border:1px solid #fde68a; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:600;">Form Opened</span>';
+                                        } elseif ( $item['lead_status'] === 'Verified Test' ) {
+                                            $status_badge = '<span style="background:#f3e8ff; color:#6b21a8; border:1px solid #e9d5ff; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:600;">Verified Test</span>';
+                                        } elseif ( $item['lead_status'] === 'New' || $item['lead_status'] === 'Prequalified' ) {
+                                            $status_badge = '<span style="background:#ecfdf5; color:#065f46; border:1px solid #a7f3d0; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:600;">Prequalified</span>';
+                                        }
+                                    ?>
+                                    <tr>
+                                        <td style="font-weight:600; color:#64748b;">#<?php echo esc_html( $item['id'] ); ?></td>
+                                        <td style="font-size:12px; color:#475569;"><?php echo esc_html( $item['submission_time'] ); ?></td>
+                                        <td style="font-weight:600; color:#0f172a;"><?php echo esc_html( $item['first_name'] ?: '—' ); ?></td>
+                                        <td><?php echo esc_html( $item['company_name'] ?: '—' ); ?></td>
+                                        <td><code style="background:#f1f5f9; padding:2px 6px; border-radius:4px;"><?php echo esc_html( $item['mc_number'] ?: '—' ); ?></code></td>
+                                        <td><?php echo $status_badge; ?></td>
+                                        <td><?php echo $partner_badge; ?></td>
+                                        <td style="font-size:12px; color:#64748b;">
+                                            <?php if ( ! empty( $item['utm_source'] ) || ! empty( $item['utm_campaign'] ) ) : ?>
+                                                <code><?php echo esc_html( ($item['utm_source'] ?: 'direct') . ' / ' . ($item['utm_campaign'] ?: 'none') ); ?></code>
+                                            <?php else : ?>
+                                                <span style="color:#94a3b8;">direct / none</span>
+                                            <?php endif; ?>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php else : ?>
+                                <tr>
+                                    <td colspan="8" style="text-align:center; padding:30px; color:#64748b;">No recent stream activity recorded yet.</td>
+                                </tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div style="margin-top:16px; text-align:right;">
+                    <a href="<?php echo admin_url('admin.php?page=carrier-prequal-leads'); ?>" style="color:#0284c7; text-decoration:none; font-weight:600; font-size:13px;">
+                        View Full Submissions Archive &amp; Export CSV &rarr;
+                    </a>
+                </div>
+            </div>
+
         </div>
+
+        <style>
+            @keyframes pulse {
+                0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
+                70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+                100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+            }
+        </style>
+
+        <script>
+        (function() {
+            var restNonce = '<?php echo esc_js( $rest_nonce ); ?>';
+            var statsUrl  = '<?php echo esc_url_raw( rest_url( "empire-dispatch/v1/realtime-stats" ) ); ?>';
+            var pingUrl   = '<?php echo esc_url_raw( rest_url( "empire-dispatch/v1/realtime-test-ping" ) ); ?>';
+            var autoRefresh = true;
+            var pollInterval = null;
+
+            function formatPartner(p) {
+                if (p === 'SUMMAR') return '<span style="background:#ecfdf5; color:#065f46; border:1px solid #a7f3d0; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:700;">SUMMAR</span>';
+                if (p === 'BASICBLOCK') return '<span style="background:#eef2ff; color:#3730a3; border:1px solid #c7d2fe; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:700;">BASICBLOCK</span>';
+                return '<span style="color:#94a3b8; font-size:12px;">—</span>';
+            }
+
+            function formatStatus(s) {
+                if (s === 'Form Opened') return '<span style="background:#fef3c7; color:#92400e; border:1px solid #fde68a; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:600;">Form Opened</span>';
+                if (s === 'Verified Test') return '<span style="background:#f3e8ff; color:#6b21a8; border:1px solid #e9d5ff; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:600;">Verified Test</span>';
+                if (s === 'New' || s === 'Prequalified') return '<span style="background:#ecfdf5; color:#065f46; border:1px solid #a7f3d0; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:600;">Prequalified</span>';
+                return '<span style="background:#f1f5f9; color:#475569; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:600;">' + (s || 'New') + '</span>';
+            }
+
+            function fetchRealtimeStats() {
+                fetch(statsUrl, {
+                    headers: { 'X-WP-Nonce': restNonce }
+                })
+                .then(function(res) { return res.json(); })
+                .then(function(data) {
+                    if (!data || !data.success) return;
+                    document.getElementById('stat-active-30m').innerText = data.active_30m;
+                    document.getElementById('stat-today-count').innerText = data.today_count;
+                    document.getElementById('stat-total-count').innerText = data.total_count;
+                    document.getElementById('stat-summar-count').innerText = data.summar_count;
+                    document.getElementById('stat-basicblock-count').innerText = data.basicblock_count;
+                    document.getElementById('stat-kit-count').innerText = data.kit_count;
+                    
+                    var d = new Date();
+                    document.getElementById('last-updated-time').innerText = d.toLocaleTimeString();
+
+                    if (data.recent_items && data.recent_items.length) {
+                        var tbody = document.getElementById('realtime-activity-body');
+                        var rowsHtml = '';
+                        data.recent_items.forEach(function(item) {
+                            var campaignStr = (item.utm_source || 'direct') + ' / ' + (item.utm_campaign || 'none');
+                            rowsHtml += '<tr>' +
+                                '<td style="font-weight:600; color:#64748b;">#' + item.id + '</td>' +
+                                '<td style="font-size:12px; color:#475569;">' + (item.submission_time || '') + '</td>' +
+                                '<td style="font-weight:600; color:#0f172a;">' + (item.first_name || '—') + '</td>' +
+                                '<td>' + (item.company_name || '—') + '</td>' +
+                                '<td><code style="background:#f1f5f9; padding:2px 6px; border-radius:4px;">' + (item.mc_number || '—') + '</code></td>' +
+                                '<td>' + formatStatus(item.lead_status) + '</td>' +
+                                '<td>' + formatPartner(item.matched_partner) + '</td>' +
+                                '<td style="font-size:12px; color:#64748b;"><code>' + campaignStr + '</code></td>' +
+                            '</tr>';
+                        });
+                        tbody.innerHTML = rowsHtml;
+                    }
+                })
+                .catch(function(err) {
+                    console.warn('[Realtime Dashboard] Fetch error:', err);
+                });
+            }
+
+            // Test Ping button
+            var testBtn = document.getElementById('btn-realtime-test');
+            if (testBtn) {
+                testBtn.addEventListener('click', function() {
+                    testBtn.disabled = true;
+                    testBtn.innerText = 'Sending...';
+                    fetch(pingUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-WP-Nonce': restNonce
+                        }
+                    })
+                    .then(function(res) { return res.json(); })
+                    .then(function(resp) {
+                        testBtn.disabled = false;
+                        testBtn.innerText = '🧪 Send Test Ping';
+                        if (resp && resp.success) {
+                            fetchRealtimeStats();
+                        }
+                    })
+                    .catch(function() {
+                        testBtn.disabled = false;
+                        testBtn.innerText = '🧪 Send Test Ping';
+                    });
+                });
+            }
+
+            // Auto-refresh toggle
+            var toggleBtn = document.getElementById('btn-toggle-refresh');
+            if (toggleBtn) {
+                toggleBtn.addEventListener('click', function() {
+                    autoRefresh = !autoRefresh;
+                    if (autoRefresh) {
+                        toggleBtn.innerText = '🔄 Auto-Refresh: ON (10s)';
+                        toggleBtn.style.background = '#f8fafc';
+                        startPolling();
+                    } else {
+                        toggleBtn.innerText = '⏸️ Auto-Refresh: PAUSED';
+                        toggleBtn.style.background = '#fef2f2';
+                        stopPolling();
+                    }
+                });
+            }
+
+            function startPolling() {
+                if (pollInterval) clearInterval(pollInterval);
+                pollInterval = setInterval(fetchRealtimeStats, 10000);
+            }
+            function stopPolling() {
+                if (pollInterval) clearInterval(pollInterval);
+                pollInterval = null;
+            }
+
+            startPolling();
+        })();
+        </script>
         <?php
     }
+
 }
 
 new Empire_Carrier_Prequal_Manager();

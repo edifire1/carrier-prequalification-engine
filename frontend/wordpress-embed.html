@@ -1,0 +1,545 @@
+<!-- Empire Dispatch: self-contained WordPress Custom HTML embed. No API secrets. --><style>
+.prequal-wrapper{box-sizing:border-box;background:#09090b;color:#f4f4f5;font:16px/1.5 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:40px 20px;min-height:100vh;color-scheme:dark}
+.prequal-wrapper *, .prequal-wrapper *::before, .prequal-wrapper *::after{box-sizing:border-box}
+.prequal-wrapper .prequal-inner{max-width:768px;margin:auto}
+.prequal-wrapper header{text-align:center;margin-bottom:32px}
+.prequal-wrapper .eyebrow{color:#fb923c;font-size:14px;font-weight:700}
+.prequal-wrapper h1{font-size:clamp(28px,4vw,40px);line-height:1.2;margin:16px 0;font-weight:800;letter-spacing:-.03em}
+.prequal-wrapper h1 span{color:#fb923c}
+.prequal-wrapper h2{font-size:24px;line-height:1.3;margin:0 0 16px}
+.prequal-wrapper p{color:#b8b8c2;margin:12px 0;overflow-wrap:anywhere}
+.prequal-wrapper #prequal-card{padding:32px;border:1px solid #303036;border-radius:16px;background:#121216}
+.prequal-wrapper fieldset{padding:0 0 24px;margin:0 0 24px;border:0;border-bottom:1px solid #303036;min-width:0}
+.prequal-wrapper legend{padding:0;margin:0 0 16px;color:#e4e4e7;font-weight:700;font-size:16px}
+.prequal-wrapper .prequal-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.prequal-wrapper .prequal-equipment{grid-template-columns:repeat(3,minmax(0,1fr))}
+.prequal-wrapper .prequal-field{display:block;min-width:0;margin:0}
+.prequal-wrapper .prequal-field>span{display:block;color:#d4d4d8;font-size:14px;margin-bottom:8px}
+.prequal-wrapper input:not([type=radio]){display:block;width:100%;min-height:48px;background:#18181c;color:#fff;border:1px solid #52525b;border-radius:10px;padding:12px;font:inherit}
+.prequal-wrapper input::placeholder{color:#a1a1aa}
+.prequal-wrapper input:focus-visible,.prequal-wrapper a:focus-visible,.prequal-wrapper button:focus-visible{outline:3px solid #fdba74;outline-offset:3px}
+#prequal-form .prequal-choice{display:block;position:relative;cursor:pointer;margin:0;min-width:0}
+#prequal-form .prequal-radio{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+#prequal-form .prequal-option{display:flex;flex-direction:column;justify-content:center;box-sizing:border-box;min-height:72px;height:100%;padding:12px;border:1px solid #52525b;border-radius:10px;background:#18181c;color:#e4e4e7;font-size:14px;line-height:1.45}
+#prequal-form .prequal-option>span:first-child{font-weight:650}
+#prequal-form .prequal-option small{display:block;color:#b8b8c2;font-size:14px;margin-top:4px}
+#prequal-form .prequal-radio:checked+.prequal-option{border-color:#f97316;background:rgba(249,115,22,.10);color:#fb923c;box-shadow:inset 0 0 0 1px #f97316}
+#prequal-form .prequal-radio:checked+.prequal-option>span:first-child{color:#fb923c}
+#prequal-form .prequal-radio:checked+.prequal-option>span:first-child::after{content:" ✓"}
+#prequal-form .prequal-radio:focus-visible+.prequal-option{outline:3px solid #fdba74;outline-offset:3px}
+.prequal-wrapper [hidden]{display:none!important}
+.prequal-wrapper button,.prequal-wrapper .prequal-cta{display:flex;align-items:center;justify-content:center;min-height:48px;padding:16px 20px;border:0;border-radius:10px;background:#fb923c;color:#18181b;font:700 16px/1.4 system-ui,sans-serif;text-align:center;text-decoration:none;cursor:pointer}
+.prequal-wrapper #submit-btn{width:100%;margin-top:24px}
+.prequal-wrapper #submit-btn:disabled{opacity:.65;cursor:wait}
+.prequal-wrapper .prequal-note{font-size:14px}
+.prequal-wrapper #prequal-error{margin:0 0 24px;padding:16px;border:1px solid #f87171;border-radius:10px;color:#fecaca;background:#281419}
+.prequal-wrapper #loading-state{padding:48px 0;text-align:center}
+.prequal-wrapper .prequal-result{border:1px solid #52525b;border-radius:12px;padding:24px}
+.prequal-wrapper .prequal-result a:not(.prequal-cta){color:#fdba74;overflow-wrap:anywhere}
+.prequal-wrapper .prequal-result .prequal-cta{margin:24px 0}
+.prequal-wrapper .prequal-rep{padding:16px;background:#18181c;border-radius:10px;margin:24px 0}
+.prequal-prefill-banner{background:rgba(16,185,129,0.10);border:1px solid #10b981;border-radius:12px;padding:16px 18px;margin-bottom:24px;display:flex;align-items:center;gap:14px}
+.prequal-prefill-badge{background:#10b981;color:#042f2e;font-weight:700;font-size:11px;padding:2px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:0.5px}
+@media(max-width:600px){.prequal-wrapper{padding:24px 16px}.prequal-wrapper #prequal-card{padding:20px}.prequal-wrapper .prequal-grid{grid-template-columns:1fr}.prequal-wrapper .prequal-equipment{grid-template-columns:repeat(2,minmax(0,1fr))}.prequal-wrapper .prequal-result{padding:16px}.prequal-prefill-banner{flex-direction:column;align-items:flex-start}}
+@media(prefers-reduced-motion:reduce){.prequal-wrapper *{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style><div class="prequal-wrapper"><div class="prequal-inner"><header><div class="eyebrow">45-Second Carrier Factoring Prequalification Engine</div><h1>Find your factoring partner.<br><span>Start with two quick questions.</span></h1><p>Confirm your operating profile to receive an immediate preliminary partner match. Final approval, rates, and terms are determined by the partner.</p><p class="prequal-note">Operational prequalification only · No credit pull by this form</p></header><div id="prequal-card">
+
+<!-- Dynamic Carrier Pre-fill Notification Banner -->
+<div id="carrier-verified-badge" class="prequal-prefill-banner" style="display:none;">
+  <div style="font-size:28px;">🚛</div>
+  <div style="flex:1;">
+    <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span class="prequal-prefill-badge">Carrier Verified</span>
+      <span style="font-size:13px; color:#a7f3d0;" id="badge-carrier-sub">Pre-filled from email invitation</span>
+    </div>
+    <div style="font-weight:700; color:#fff; font-size:16px; margin-top:4px;">
+      Welcome, <span id="badge-name-display" style="color:#fb923c;">Driver</span> • <span id="badge-company-display">Your Fleet</span>
+    </div>
+    <div style="font-size:13px; color:#cbd5e1; margin-top:2px;">
+      MC/DOT: <strong id="badge-mc-display" style="color:#fff; font-family:monospace;"></strong>
+    </div>
+    <div style="font-size:12px; color:#94a3b8; margin-top:6px;">
+      ✓ All contact details locked &amp; verified. Simply select your <strong>Authority Age</strong> and <strong>Monthly Revenue</strong> below to see your rate:
+    </div>
+  </div>
+  <div>
+    <button type="button" id="toggle-edit-contact" style="background:#27272a; border:1px solid #52525b; color:#cbd5e1; border-radius:6px; padding:6px 12px; font-size:12px; cursor:pointer; min-height:auto; height:auto;">
+      Edit Details ✎
+    </button>
+  </div>
+</div>
+
+<form id="prequal-form" aria-describedby="prequal-error">
+<p id="prequal-error" role="alert" tabindex="-1" hidden></p>
+
+<div id="mc-input-container" style="margin-bottom:24px">
+  <label class="prequal-field" for="mc_dot">
+    <span>MC number or USDOT number *</span>
+    <input type="text" id="mc_dot" name="mc_dot" required placeholder="e.g. MC-123456 or DOT 345678">
+  </label>
+</div>
+
+<!-- Question 1: Authority Age (Primary Question) -->
+<fieldset>
+  <legend>1. Authority age *</legend>
+  <div class="prequal-grid">
+    <label class="prequal-choice" for="prequal-choice-1">
+      <input class="prequal-radio" id="prequal-choice-1" name="authority_age" required="" type="radio" value="under_90_days"/>
+      <span class="prequal-option">
+        <span>Under 90 Days</span>
+        <small>New authority welcome</small>
+      </span>
+    </label>
+    <label class="prequal-choice" for="prequal-choice-2">
+      <input class="prequal-radio" id="prequal-choice-2" name="authority_age" required="" type="radio" value="over_90_days"/>
+      <span class="prequal-option">
+        <span>90+ Days (Active)</span>
+        <small>Eligible for Summar Non-Recourse</small>
+      </span>
+    </label>
+  </div>
+</fieldset>
+
+<!-- Question 2: Monthly Gross Revenue (Primary Question) -->
+<fieldset>
+  <legend>2. Average monthly gross revenue *</legend>
+  <div class="prequal-grid">
+    <label class="prequal-choice" for="prequal-choice-9">
+      <input class="prequal-radio" id="prequal-choice-9" name="monthly_gross" required="" type="radio" value="under_10k"/>
+      <span class="prequal-option">
+        <span>Under $10,000/mo</span>
+        <small>Starting / Part-time</small>
+      </span>
+    </label>
+    <label class="prequal-choice" for="prequal-choice-10">
+      <input class="prequal-radio" id="prequal-choice-10" name="monthly_gross" required="" type="radio" value="10k_25k"/>
+      <span class="prequal-option">
+        <span>$10,000 – $25,000/mo</span>
+        <small>Standard Solo Truck</small>
+      </span>
+    </label>
+    <label class="prequal-choice" for="prequal-choice-11">
+      <input class="prequal-radio" id="prequal-choice-11" name="monthly_gross" required="" type="radio" value="25k_50k_plus"/>
+      <span class="prequal-option">
+        <span>$25,000 – $50,000+/mo</span>
+        <small>Team or Fleet Tier</small>
+      </span>
+    </label>
+  </div>
+</fieldset>
+
+<!-- Question 3: Primary Equipment (Pre-selected Dry Van default, 1-tap change) -->
+<fieldset>
+  <legend>3. Primary equipment operated *</legend>
+  <div class="prequal-grid prequal-equipment">
+    <label class="prequal-choice" for="prequal-choice-3">
+      <input class="prequal-radio" id="prequal-choice-3" name="equipment" required="" type="radio" value="Dry Van (53ft)" checked/>
+      <span class="prequal-option"><span>Dry Van (53')</span><small>Standard Freight</small></span>
+    </label>
+    <label class="prequal-choice" for="prequal-choice-4">
+      <input class="prequal-radio" id="prequal-choice-4" name="equipment" required="" type="radio" value="Reefer (Temperature-Controlled)"/>
+      <span class="prequal-option"><span>Reefer (53')</span><small>Temp Controlled</small></span>
+    </label>
+    <label class="prequal-choice" for="prequal-choice-5">
+      <input class="prequal-radio" id="prequal-choice-5" name="equipment" required="" type="radio" value="Flatbed / Step Deck"/>
+      <span class="prequal-option"><span>Flatbed / Step Deck</span><small>Open Deck Freight</small></span>
+    </label>
+    <label class="prequal-choice" for="prequal-choice-6">
+      <input class="prequal-radio" id="prequal-choice-6" name="equipment" required="" type="radio" value="26ft Box Truck"/>
+      <span class="prequal-option"><span>26ft Box Truck</span><small>Expedited / LTL</small></span>
+    </label>
+    <label class="prequal-choice" for="prequal-choice-7">
+      <input class="prequal-radio" id="prequal-choice-7" name="equipment" required="" type="radio" value="Hotshot / Power Only"/>
+      <span class="prequal-option"><span>Hotshot / Power Only</span><small>Specialized</small></span>
+    </label>
+    <label class="prequal-choice" for="prequal-choice-8">
+      <input class="prequal-radio" id="prequal-choice-8" name="equipment" required="" type="radio" value="Multi-Truck Fleet"/>
+      <span class="prequal-option"><span>Fleet (2+ Trucks)</span><small>Multiple Units</small></span>
+    </label>
+  </div>
+</fieldset>
+
+<!-- Question 4: Factoring Situation (Defaulted to Not Factoring / Clean, 1-tap change) -->
+<fieldset>
+  <legend>4. Current factoring situation *</legend>
+  <div class="prequal-grid">
+    <label class="prequal-choice" for="prequal-choice-12">
+      <input class="prequal-radio" id="prequal-choice-12" name="factoring_status" required="" type="radio" value="not_factoring" checked/>
+      <span class="prequal-option"><span>Not Factoring (Clean / Open)</span><small>Need same-day cash flow &amp; fuel advances</small></span>
+    </label>
+    <label class="prequal-choice" for="prequal-choice-13">
+      <input class="prequal-radio" id="prequal-choice-13" name="factoring_status" required="" type="radio" value="rate_too_high"/>
+      <span class="prequal-option"><span>Factoring (Rate too high / Expiring)</span><small>Paying &gt;3% or monthly minimum penalties</small></span>
+    </label>
+    <label class="prequal-choice" for="prequal-choice-14">
+      <input class="prequal-radio" id="prequal-choice-14" name="factoring_status" required="" type="radio" value="locked_contract"/>
+      <span class="prequal-option"><span>Locked in Contract (Need Exit)</span><small>Want clean zero-contract terms</small></span>
+    </label>
+    <label class="prequal-choice" for="prequal-choice-15">
+      <input class="prequal-radio" id="prequal-choice-15" name="factoring_status" required="" type="radio" value="exploring"/>
+      <span class="prequal-option"><span>Exploring (Want Broker Credit Checks)</span><small>Seeking non-recourse default protection</small></span>
+    </label>
+  </div>
+</fieldset>
+
+<!-- Carrier Contact Fields (Auto-Pre-filled and Collapsed when arriving via email link) -->
+<fieldset id="contact-fields-fieldset">
+  <legend id="contact-legend">5. Carrier contact &amp; notification details</legend>
+  <div class="prequal-grid">
+    <label class="prequal-field" for="company_name">
+      <span>Company / carrier legal name *</span>
+      <input type="text" id="company_name" name="company_name" required placeholder="e.g. Apex Freight Logistics LLC">
+    </label>
+    <label class="prequal-field" for="owner_name">
+      <span>Owner / driver contact name *</span>
+      <input type="text" id="owner_name" name="owner_name" required placeholder="Your name">
+    </label>
+    <label class="prequal-field" for="phone">
+      <span>Direct cell phone *</span>
+      <input type="tel" id="phone" name="phone" required placeholder="e.g. (555) 000-0000">
+    </label>
+    <label class="prequal-field" for="email">
+      <span>Email address *</span>
+      <input type="email" id="email" name="email" required placeholder="dispatch@example.com">
+    </label>
+  </div>
+</fieldset>
+
+<button type="submit" id="submit-btn">Check my preliminary partner match →</button>
+<p class="prequal-note">Submitting shares these details with Empire Dispatch for referral routing and direct contact by the matched factoring partner. Questions? Call (782) 201-5130.</p>
+</form>
+
+<div id="loading-state" role="status" aria-live="polite" hidden>
+  <h2>Checking your operating profile…</h2>
+  <p>Please wait while we request your partner match.</p>
+</div>
+
+<div id="result-summar" class="prequal-result" hidden>
+  <p class="eyebrow">Preliminary partner match</p>
+  <h2>Potential match: Summar Financial</h2>
+  <p>Based on your answers, Summar Financial is your top match for same-day non-recourse funding (zero clawbacks on broker defaults). Rates and terms are subject to partner review.</p>
+  <div class="prequal-rep">
+    <strong>Elizabeth Valencia</strong>
+    <p>Summar Financial<br><a href="mailto:evalencia@summar.com">evalencia@summar.com</a></p>
+  </div>
+  <a id="summar-calendar-btn" class="prequal-cta" href="https://cwlqj04.na1.hs-sales-engage.com/Elizabeth-Valencia" target="_blank" rel="noopener noreferrer">Schedule onboarding with Elizabeth ↗</a>
+  <p data-email-status>Partner match returned. Email sending has not been confirmed; use the partner link above to continue.</p>
+</div>
+
+<div id="result-basicblock" class="prequal-result" hidden>
+  <p class="eyebrow">Preliminary partner match</p>
+  <h2>Potential match: BasicBlock</h2>
+  <p>Based on your answers, BasicBlock is your recommended match for flexible, high-speed funding with flat rates and zero long-term contracts (ideal for growing authorities &lt;90 days).</p>
+  <div class="prequal-rep">
+    <strong>Sydney Lock | BasicBlock</strong>
+    <p><a href="tel:+14026000318">(402) 600-0318</a><br><a href="mailto:sydney.lock@basicblock.io">sydney.lock@basicblock.io</a></p>
+  </div>
+  <a id="basicblock-activate-btn" class="prequal-cta" href="https://na2.hubs.ly/y0y4mS0" target="_blank" rel="noopener noreferrer">Continue to BasicBlock application ↗</a>
+  <p data-email-status>Partner match returned. Email sending has not been confirmed; use the partner link above to continue.</p>
+</div>
+
+</div></div></div>
+
+<script>
+(function () {
+  'use strict';
+
+  function initPrequal() {
+    const form = document.getElementById('prequal-form');
+    if (!form || form.dataset.prequalInitialized) return;
+    form.dataset.prequalInitialized = 'true';
+
+    const root = form.closest('.prequal-wrapper');
+    const loading = root.querySelector('#loading-state');
+    const results = {
+      SUMMAR: root.querySelector('#result-summar'),
+      BASICBLOCK: root.querySelector('#result-basicblock')
+    };
+    const error = form.querySelector('#prequal-error');
+    const submit = form.querySelector('#submit-btn');
+    const groups = ['authority_age', 'equipment', 'monthly_gross', 'factoring_status'];
+
+    const LOCAL_ENDPOINT = '/wp-json/empire-dispatch/v1/prequal-submit';
+    const PING_ENDPOINT  = '/wp-json/empire-dispatch/v1/prequal-ping';
+    const BACKUP_WEBHOOK = 'https://n8n.businessautomationempire.online/webhook/trucker-factoring-prequal';
+
+    let pending = false;
+    let prequalSubmissionId = null;
+
+    function show(el, visible) {
+      if (!el) return;
+      el.hidden = !visible;
+      el.classList.toggle('hidden', !visible);
+    }
+
+    function partnerUrl(value, allowedHostname) {
+      if (typeof value !== 'string') return null;
+      try {
+        const url = new URL(value);
+        return url.protocol === 'https:' && url.hostname.toLowerCase() === allowedHostname.toLowerCase() &&
+          !url.username && !url.password && !url.port ? url.href : null;
+      } catch (_) { return null; }
+    }
+
+    // --- SMART PRE-FILL & AUTO-CLICK TRACKING ---
+    const params = new URLSearchParams(window.location.search);
+    const prefillMC      = (params.get('mc') || params.get('mc_dot') || params.get('mcdot') || params.get('dot') || '').trim();
+    const prefillName    = (params.get('name') || params.get('first_name') || params.get('owner_name') || '').trim();
+    const prefillCompany = (params.get('company') || params.get('company_name') || '').trim();
+    const prefillPhone   = (params.get('phone') || '').trim();
+    const prefillEmail   = (params.get('email') || params.get('email_address') || '').trim();
+    const prefillEquip   = (params.get('equipment') || '').trim();
+    const prefillFactor  = (params.get('factoring_status') || '').trim();
+    const utmSource      = (params.get('utm_source') || 'kit_email').trim();
+    const utmMedium      = (params.get('utm_medium') || 'email').trim();
+    const utmCampaign    = (params.get('utm_campaign') || '').trim();
+
+    const mcInput      = document.getElementById('mc_dot');
+    const nameInput    = document.getElementById('owner_name');
+    const companyInput = document.getElementById('company_name');
+    const phoneInput   = document.getElementById('phone');
+    const emailInput   = document.getElementById('email');
+
+    let isPreFilled = false;
+
+    if (prefillMC && mcInput) { mcInput.value = prefillMC; isPreFilled = true; }
+    if (prefillName && nameInput) { nameInput.value = prefillName; isPreFilled = true; }
+    if (prefillCompany && companyInput) { companyInput.value = prefillCompany; isPreFilled = true; }
+    if (prefillPhone && phoneInput) { phoneInput.value = prefillPhone; isPreFilled = true; }
+    if (prefillEmail && emailInput) { emailInput.value = prefillEmail; isPreFilled = true; }
+
+    if (prefillEquip) {
+      const equipRadio = form.querySelector(`input[name="equipment"][value="${prefillEquip}"]`);
+      if (equipRadio) equipRadio.checked = true;
+    }
+    if (prefillFactor) {
+      const factorRadio = form.querySelector(`input[name="factoring_status"][value="${prefillFactor}"]`);
+      if (factorRadio) factorRadio.checked = true;
+    }
+
+    // If pre-filled from email invitation:
+    if (isPreFilled) {
+      const badge = document.getElementById('carrier-verified-badge');
+      const badgeName = document.getElementById('badge-name-display');
+      const badgeCompany = document.getElementById('badge-company-display');
+      const badgeMC = document.getElementById('badge-mc-display');
+      const mcContainer = document.getElementById('mc-input-container');
+      const contactFieldset = document.getElementById('contact-fields-fieldset');
+      const toggleEditBtn = document.getElementById('toggle-edit-contact');
+
+      if (badge) badge.style.display = 'flex';
+      if (badgeName) badgeName.textContent = prefillName || 'Driver';
+      if (badgeCompany) badgeCompany.textContent = prefillCompany || 'Your Fleet';
+      if (badgeMC) badgeMC.textContent = prefillMC ? (prefillMC.toUpperCase().includes('MC') ? prefillMC : 'MC ' + prefillMC) : 'Verified';
+
+      // Hide MC input container and collapse contact fieldset to remove friction
+      if (mcContainer && prefillMC) mcContainer.style.display = 'none';
+      if (contactFieldset) contactFieldset.style.display = 'none';
+
+      if (toggleEditBtn && contactFieldset) {
+        toggleEditBtn.addEventListener('click', function () {
+          if (contactFieldset.style.display === 'none') {
+            contactFieldset.style.display = 'block';
+            if (mcContainer) mcContainer.style.display = 'block';
+            toggleEditBtn.textContent = 'Hide Details ▲';
+          } else {
+            contactFieldset.style.display = 'none';
+            if (mcContainer && prefillMC) mcContainer.style.display = 'none';
+            toggleEditBtn.textContent = 'Edit Details ✎';
+          }
+        });
+      }
+
+      // INSTANT SILENT PING: Capture lead in WordPress DB immediately on page load!
+      try {
+        fetch(PING_ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            mc_dot: prefillMC,
+            company_name: prefillCompany,
+            owner_name: prefillName,
+            phone: prefillPhone,
+            email: prefillEmail,
+            utm_source: utmSource,
+            utm_medium: utmMedium,
+            utm_campaign: utmCampaign
+          })
+        }).then(function (res) { return res.json(); }).then(function (data) {
+          if (data && data.submission_id) {
+            prequalSubmissionId = data.submission_id;
+          }
+        }).catch(function () {});
+      } catch (_) {}
+    }
+
+    // Google Analytics Outbound Click Tracking for Partner CTAs
+    const summarBtn = root.querySelector('#summar-calendar-btn');
+    if (summarBtn) {
+      summarBtn.addEventListener('click', function() {
+        try {
+          if (typeof gtag === 'function') {
+            gtag('event', 'partner_calendar_click', {
+              'event_category': 'Outbound',
+              'event_label': 'Elizabeth Valencia Calendar',
+              'partner': 'Summar Financial'
+            });
+          } else if (typeof __gaTracker === 'function') {
+            __gaTracker('send', 'event', 'Outbound', 'Click_Summar_Calendar', 'Elizabeth Valencia');
+          }
+        } catch (_) {}
+      });
+    }
+
+    const basicblockBtn = root.querySelector('#basicblock-activate-btn');
+    if (basicblockBtn) {
+      basicblockBtn.addEventListener('click', function() {
+        try {
+          if (typeof gtag === 'function') {
+            gtag('event', 'partner_activation_click', {
+              'event_category': 'Outbound',
+              'event_label': 'BasicBlock Application',
+              'partner': 'BasicBlock'
+            });
+          } else if (typeof __gaTracker === 'function') {
+            __gaTracker('send', 'event', 'Outbound', 'Click_BasicBlock_App', 'BasicBlock');
+          }
+        } catch (_) {}
+      });
+    }
+
+    // Form Submission
+    form.addEventListener('submit', async function (event) {
+      event.preventDefault();
+      if (pending) return;
+      error.hidden = true;
+
+      if (!form.reportValidity()) {
+        const contactFieldset = document.getElementById('contact-fields-fieldset');
+        const mcContainer = document.getElementById('mc-input-container');
+        if (contactFieldset) contactFieldset.style.display = 'block';
+        if (mcContainer) mcContainer.style.display = 'block';
+        return;
+      }
+
+      const formData = new FormData(form);
+      for (const group of groups) {
+        if (formData.getAll(group).length !== 1 || !formData.get(group)) {
+          error.textContent = 'Please select one answer for each question.';
+          error.hidden = false;
+          error.focus();
+          return;
+        }
+      }
+
+      const payload = Object.fromEntries(formData.entries());
+      if (prequalSubmissionId) {
+        payload.submission_id = prequalSubmissionId;
+      }
+      if (utmSource) payload.utm_source = utmSource;
+      if (utmMedium) payload.utm_medium = utmMedium;
+      if (utmCampaign) payload.utm_campaign = utmCampaign;
+
+      pending = true;
+      submit.disabled = true;
+      form.setAttribute('aria-busy', 'true');
+      Object.values(results).forEach(el => show(el, false));
+      show(form, false);
+      show(loading, true);
+
+      let data = null;
+
+      // 1. Submit to WordPress local REST Endpoint (stores in MySQL table & syncs to n8n)
+      try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 12000);
+        const response = await fetch(LOCAL_ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+          signal: controller.signal
+        });
+        clearTimeout(timeout);
+        if (response.ok) {
+          data = await response.json();
+        }
+      } catch (err) {
+        console.warn('Local endpoint bypassed, attempting webhook fallback...', err);
+      }
+
+      // 2. Redundant fallback directly to n8n webhook if local returned error
+      if (!data || data.success !== true) {
+        try {
+          const controller2 = new AbortController();
+          const timeout2 = setTimeout(() => controller2.abort(), 12000);
+          const response2 = await fetch(BACKUP_WEBHOOK, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+            signal: controller2.signal
+          });
+          clearTimeout(timeout2);
+          if (response2.ok) {
+            data = await response2.json();
+          }
+        } catch (err2) {
+          console.error('Fallback webhook error:', err2);
+        }
+      }
+
+      try {
+        if (!data || data.success !== true || !Object.prototype.hasOwnProperty.call(results, data.tier)) {
+          throw new Error('response');
+        }
+
+        // Fire Google Analytics / MonsterInsights conversion event
+        try {
+          if (typeof gtag === 'function') {
+            gtag('event', 'prequal_form_submit', {
+              'event_category': 'Prequalification',
+              'event_label': data.tier,
+              'matched_partner': data.tier
+            });
+          } else if (typeof __gaTracker === 'function') {
+            __gaTracker('send', 'event', 'Prequalification', 'Submit', data.tier);
+          }
+        } catch (_) {}
+
+        const result = results[data.tier];
+        const notice = result.querySelector('[data-email-status]');
+        notice.textContent = data.email_sent === true
+          ? 'The server confirmed the referral email was sent. Check your inbox and spam folder.'
+          : 'Partner match returned. Email sending has not been confirmed; use the partner link above to continue.';
+        const isSummar = data.tier === 'SUMMAR';
+        const link = result.querySelector(isSummar ? '#summar-calendar-btn' : '#basicblock-activate-btn');
+        const safeUrl = partnerUrl(isSummar ? data.booking_url : data.activation_url,
+          isSummar ? 'cwlqj04.na1.hs-sales-engage.com' : 'na2.hubs.ly');
+        if (safeUrl) link.href = safeUrl;
+        show(result, true);
+        root.querySelector('#prequal-card').scrollIntoView({
+          behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
+        });
+        result.setAttribute('tabindex', '-1');
+        result.focus({ preventScroll: true });
+      } catch (err) {
+        Object.values(results).forEach(el => show(el, false));
+        show(form, true);
+        error.textContent = 'We could not confirm your result. Please check your connection or call (782) 201-5130 before retrying; your submission may have been processed.';
+        error.hidden = false;
+        error.focus();
+      } finally {
+        show(loading, false);
+        pending = false;
+        submit.disabled = false;
+        form.removeAttribute('aria-busy');
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initPrequal, { once: true });
+  } else {
+    initPrequal();
+  }
+})();
+</script>

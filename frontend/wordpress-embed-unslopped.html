@@ -1,0 +1,1151 @@
+<!-- Empire Dispatch: Unslopped High-Craft Carrier Factoring Prequalification Engine -->
+<style>
+/* --- UNSLOP DESIGN SYSTEM: GRAPHITE & HIGHWAY AMBER --- */
+.prequal-root {
+  box-sizing: border-box;
+  background-color: #0d0e11;
+  color: #ededed;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  padding: 48px 20px;
+  min-height: 100vh;
+  color-scheme: dark;
+  -webkit-font-smoothing: antialiased;
+}
+.prequal-root *, .prequal-root *::before, .prequal-root *::after {
+  box-sizing: border-box;
+}
+.prequal-container {
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+/* Header */
+.prequal-header {
+  margin-bottom: 32px;
+  text-align: left;
+}
+.prequal-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #f59e0b;
+  margin-bottom: 12px;
+}
+.prequal-eyebrow .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #f59e0b;
+}
+.prequal-title {
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: #fcfcfc;
+  margin: 0 0 12px 0;
+}
+.prequal-subtitle {
+  font-size: 15px;
+  line-height: 1.5;
+  color: #9a9aa2;
+  margin: 0;
+}
+
+/* Main Card */
+.prequal-card {
+  background-color: #141519;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+}
+
+/* Carrier Verified Top Bar */
+.carrier-verified-bar {
+  background-color: #181a20;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.carrier-verified-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.carrier-verified-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #34d399;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.carrier-verified-tag .status-pulse {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: #10b981;
+}
+.carrier-verified-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #f4f4f6;
+}
+.carrier-verified-name span {
+  color: #f59e0b;
+}
+.carrier-verified-meta {
+  font-size: 13px;
+  color: #8b8c96;
+}
+.carrier-verified-meta strong {
+  color: #d1d2dc;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+.carrier-verified-toggle {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #a1a1aa;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+.carrier-verified-toggle:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Fieldsets & Questions */
+.prequal-fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0 0 28px 0;
+}
+.prequal-legend {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #dedee4;
+  margin-bottom: 12px;
+  letter-spacing: -0.01em;
+}
+
+/* Grid Layouts */
+.prequal-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.prequal-grid-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+/* Option Cards (Radios) */
+.prequal-choice {
+  display: block;
+  position: relative;
+  cursor: pointer;
+  margin: 0;
+  user-select: none;
+}
+.prequal-radio {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.prequal-option {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 72px;
+  height: 100%;
+  padding: 14px 16px;
+  background-color: #191b20;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+}
+.prequal-choice:hover .prequal-option {
+  background-color: #1f2128;
+  border-color: rgba(255, 255, 255, 0.15);
+}
+.prequal-radio:focus-visible + .prequal-option {
+  outline: 2px solid #f59e0b;
+  outline-offset: 2px;
+}
+.prequal-option-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.prequal-option-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #ededed;
+  font-variant-numeric: tabular-nums;
+}
+.prequal-option-indicator {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+.prequal-option-indicator svg {
+  display: none;
+  width: 10px;
+  height: 10px;
+  fill: none;
+  stroke: #0d0e11;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.prequal-option-sub {
+  font-size: 12px;
+  color: #8b8c96;
+  margin-top: 4px;
+  line-height: 1.35;
+}
+
+/* Checked State */
+.prequal-radio:checked + .prequal-option {
+  background-color: rgba(245, 158, 11, 0.07);
+  border-color: #f59e0b;
+  box-shadow: inset 0 0 0 1px #f59e0b;
+}
+.prequal-radio:checked + .prequal-option .prequal-option-title {
+  color: #fcfcfc;
+}
+.prequal-radio:checked + .prequal-option .prequal-option-sub {
+  color: #c7c8d2;
+}
+.prequal-radio:checked + .prequal-option .prequal-option-indicator {
+  background-color: #f59e0b;
+  border-color: #f59e0b;
+}
+.prequal-radio:checked + .prequal-option .prequal-option-indicator svg {
+  display: block;
+}
+
+/* Input Fields */
+.prequal-input-wrap {
+  display: block;
+  margin-bottom: 20px;
+}
+.prequal-input-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: #b0b1bc;
+  margin-bottom: 8px;
+}
+.prequal-input {
+  display: block;
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 14px;
+  background-color: #181a20;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 14px;
+  font-family: inherit;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.prequal-input:focus {
+  outline: none;
+  border-color: #f59e0b;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+}
+.prequal-input::placeholder {
+  color: #63646e;
+}
+
+/* Submit Button */
+.prequal-submit-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 50px;
+  padding: 14px 24px;
+  margin-top: 28px;
+  background-color: #f59e0b;
+  color: #0d0e11;
+  border: 0;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 650;
+  cursor: pointer;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 2px 8px rgba(245, 158, 11, 0.25);
+  transition: background-color 0.15s ease, transform 0.08s ease;
+}
+.prequal-submit-btn:hover {
+  background-color: #fbbf24;
+}
+.prequal-submit-btn:active {
+  transform: translateY(1px);
+}
+.prequal-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+.prequal-submit-btn svg {
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  fill: none;
+}
+
+.prequal-disclaimer {
+  font-size: 12px;
+  line-height: 1.45;
+  color: #71717a;
+  margin: 16px 0 0 0;
+  text-align: center;
+}
+
+/* Error Alert */
+.prequal-alert-error {
+  padding: 14px 18px;
+  margin-bottom: 24px;
+  background-color: #241315;
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  border-radius: 10px;
+  color: #fca5a5;
+  font-size: 13.5px;
+  line-height: 1.4;
+}
+
+/* Loading State */
+.prequal-loading-box {
+  padding: 48px 24px;
+  text-align: center;
+}
+.prequal-spinner {
+  width: 36px;
+  height: 36px;
+  margin: 0 auto 16px auto;
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-top-color: #f59e0b;
+  border-radius: 50%;
+  animation: prequal-spin 0.8s linear infinite;
+}
+@keyframes prequal-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Results Certification Card */
+.prequal-result-box {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 28px;
+  background-color: #181a20;
+}
+.prequal-badge-match {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  color: #34d399;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 4px 10px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+}
+.prequal-match-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 8px 0;
+}
+.prequal-match-desc {
+  font-size: 14.5px;
+  line-height: 1.5;
+  color: #a1a1aa;
+  margin: 0 0 24px 0;
+}
+.prequal-rep-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: #111216;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+}
+.prequal-rep-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #24262e;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 700;
+  color: #f59e0b;
+}
+.prequal-rep-details {
+  flex: 1;
+}
+.prequal-rep-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #ffffff;
+}
+.prequal-rep-title {
+  font-size: 13px;
+  color: #8b8c96;
+}
+.prequal-rep-contact {
+  display: flex;
+  gap: 14px;
+  margin-top: 4px;
+  font-size: 13px;
+}
+.prequal-rep-contact a {
+  color: #f59e0b;
+  text-decoration: none;
+}
+.prequal-rep-contact a:hover {
+  text-decoration: underline;
+}
+.prequal-cta-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 14px 24px;
+  background-color: #f59e0b;
+  color: #0d0e11;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 650;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  transition: background-color 0.15s ease;
+}
+.prequal-cta-action:hover {
+  background-color: #fbbf24;
+}
+.prequal-status-pill {
+  font-size: 12.5px;
+  color: #8b8c96;
+  margin-top: 16px;
+  text-align: center;
+}
+
+[hidden] { display: none !important; }
+
+/* Responsive */
+@media (max-width: 640px) {
+  .prequal-root { padding: 24px 14px; }
+  .prequal-card { padding: 20px 16px; }
+  .prequal-title { font-size: 26px; }
+  .prequal-grid { grid-template-columns: 1fr; }
+  .prequal-grid-3 { grid-template-columns: 1fr; }
+  .carrier-verified-bar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .prequal-root * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+</style>
+
+<div class="prequal-root">
+  <div class="prequal-container">
+    <header class="prequal-header">
+      <div class="prequal-eyebrow">
+        <span class="dot"></span>
+        Carrier Factoring Prequalification
+      </div>
+      <h1 class="prequal-title">Find your factoring partner.</h1>
+      <p class="prequal-subtitle">Confirm your authority and monthly revenue to see your non-recourse rate in 10 seconds.</p>
+    </header>
+
+    <div class="prequal-card" id="prequal-card">
+
+      <!-- Dynamic Carrier Pre-fill Notification Banner -->
+      <div id="carrier-verified-badge" class="carrier-verified-bar" style="display:none;">
+        <div class="carrier-verified-info">
+          <div class="carrier-verified-tag">
+            <span class="status-pulse"></span>
+            Profile Verified
+          </div>
+          <div class="carrier-verified-name">
+            Welcome, <span id="badge-name-display">Driver</span> &bull; <span id="badge-company-display">Fleet</span>
+          </div>
+          <div class="carrier-verified-meta">
+            Authority: <strong id="badge-mc-display">MC Verified</strong>
+          </div>
+        </div>
+        <div>
+          <button type="button" id="toggle-edit-contact" class="carrier-verified-toggle">
+            Edit Details
+          </button>
+        </div>
+      </div>
+
+      <form id="prequal-form" aria-describedby="prequal-error">
+        <div id="prequal-error" class="prequal-alert-error" role="alert" tabindex="-1" hidden></div>
+
+        <div id="mc-input-container" class="prequal-input-wrap">
+          <label class="prequal-input-label" for="mc_dot">MC Number or USDOT Number *</label>
+          <input type="text" id="mc_dot" name="mc_dot" class="prequal-input" required placeholder="e.g. MC-123456 or DOT 345678">
+        </div>
+
+        <!-- Question 1: Authority Age -->
+        <fieldset class="prequal-fieldset">
+          <legend class="prequal-legend">1. Authority age *</legend>
+          <div class="prequal-grid">
+            <label class="prequal-choice" for="prequal-choice-1">
+              <input class="prequal-radio" id="prequal-choice-1" name="authority_age" required type="radio" value="under_90_days">
+              <span class="prequal-option">
+                <span class="prequal-option-header">
+                  <span class="prequal-option-title">Under 90 Days</span>
+                  <span class="prequal-option-indicator">
+                    <svg viewBox="0 0 12 12"><polyline points="2.5 6 4.8 8.5 9.5 3.5"></polyline></svg>
+                  </span>
+                </span>
+                <span class="prequal-option-sub">New authority welcome (flat rate)</span>
+              </span>
+            </label>
+            <label class="prequal-choice" for="prequal-choice-2">
+              <input class="prequal-radio" id="prequal-choice-2" name="authority_age" required type="radio" value="over_90_days">
+              <span class="prequal-option">
+                <span class="prequal-option-header">
+                  <span class="prequal-option-title">90+ Days (Active)</span>
+                  <span class="prequal-option-indicator">
+                    <svg viewBox="0 0 12 12"><polyline points="2.5 6 4.8 8.5 9.5 3.5"></polyline></svg>
+                  </span>
+                </span>
+                <span class="prequal-option-sub">Eligible for Summar Non-Recourse Shield</span>
+              </span>
+            </label>
+          </div>
+        </fieldset>
+
+        <!-- Question 2: Monthly Gross Revenue -->
+        <fieldset class="prequal-fieldset">
+          <legend class="prequal-legend">2. Average monthly gross revenue *</legend>
+          <div class="prequal-grid prequal-grid-3">
+            <label class="prequal-choice" for="prequal-choice-9">
+              <input class="prequal-radio" id="prequal-choice-9" name="monthly_gross" required type="radio" value="under_10k">
+              <span class="prequal-option">
+                <span class="prequal-option-header">
+                  <span class="prequal-option-title">Under $10k/mo</span>
+                  <span class="prequal-option-indicator">
+                    <svg viewBox="0 0 12 12"><polyline points="2.5 6 4.8 8.5 9.5 3.5"></polyline></svg>
+                  </span>
+                </span>
+                <span class="prequal-option-sub">Part-time or launch</span>
+              </span>
+            </label>
+            <label class="prequal-choice" for="prequal-choice-10">
+              <input class="prequal-radio" id="prequal-choice-10" name="monthly_gross" required type="radio" value="10k_25k">
+              <span class="prequal-option">
+                <span class="prequal-option-header">
+                  <span class="prequal-option-title">$10k – $25k/mo</span>
+                  <span class="prequal-option-indicator">
+                    <svg viewBox="0 0 12 12"><polyline points="2.5 6 4.8 8.5 9.5 3.5"></polyline></svg>
+                  </span>
+                </span>
+                <span class="prequal-option-sub">Standard solo truck</span>
+              </span>
+            </label>
+            <label class="prequal-choice" for="prequal-choice-11">
+              <input class="prequal-radio" id="prequal-choice-11" name="monthly_gross" required type="radio" value="25k_50k_plus">
+              <span class="prequal-option">
+                <span class="prequal-option-header">
+                  <span class="prequal-option-title">$25k – $50k+/mo</span>
+                  <span class="prequal-option-indicator">
+                    <svg viewBox="0 0 12 12"><polyline points="2.5 6 4.8 8.5 9.5 3.5"></polyline></svg>
+                  </span>
+                </span>
+                <span class="prequal-option-sub">Team or fleet tier</span>
+              </span>
+            </label>
+          </div>
+        </fieldset>
+
+        <!-- Question 3: Primary Equipment Operated -->
+        <fieldset class="prequal-fieldset">
+          <legend class="prequal-legend">3. Primary equipment operated *</legend>
+          <div class="prequal-grid prequal-grid-3">
+            <label class="prequal-choice" for="prequal-choice-3">
+              <input class="prequal-radio" id="prequal-choice-3" name="equipment" required type="radio" value="Dry Van (53ft)" checked>
+              <span class="prequal-option">
+                <span class="prequal-option-header">
+                  <span class="prequal-option-title">Dry Van (53')</span>
+                  <span class="prequal-option-indicator">
+                    <svg viewBox="0 0 12 12"><polyline points="2.5 6 4.8 8.5 9.5 3.5"></polyline></svg>
+                  </span>
+                </span>
+                <span class="prequal-option-sub">General freight</span>
+              </span>
+            </label>
+            <label class="prequal-choice" for="prequal-choice-4">
+              <input class="prequal-radio" id="prequal-choice-4" name="equipment" required type="radio" value="Reefer (Temperature-Controlled)">
+              <span class="prequal-option">
+                <span class="prequal-option-header">
+                  <span class="prequal-option-title">Reefer (53')</span>
+                  <span class="prequal-option-indicator">
+                    <svg viewBox="0 0 12 12"><polyline points="2.5 6 4.8 8.5 9.5 3.5"></polyline></svg>
+                  </span>
+                </span>
+                <span class="prequal-option-sub">Cold chain / food</span>
+              </span>
+            </label>
+            <label class="prequal-choice" for="prequal-choice-5">
+              <input class="prequal-radio" id="prequal-choice-5" name="equipment" required type="radio" value="Flatbed / Step Deck">
+              <span class="prequal-option">
+                <span class="prequal-option-header">
+                  <span class="prequal-option-title">Flatbed / Step</span>
+                  <span class="prequal-option-indicator">
+                    <svg viewBox="0 0 12 12"><polyline points="2.5 6 4.8 8.5 9.5 3.5"></polyline></svg>
+                  </span>
+                </span>
+                <span class="prequal-option-sub">Open deck steel</span>
+              </span>
+            </label>
+            <label class="prequal-choice" for="prequal-choice-6">
+              <input class="prequal-radio" id="prequal-choice-6" name="equipment" required type="radio" value="26ft Box Truck">
+              <span class="prequal-option">
+                <span class="prequal-option-header">
+                  <span class="prequal-option-title">26ft Box Truck</span>
+                  <span class="prequal-option-indicator">
+                    <svg viewBox="0 0 12 12"><polyline points="2.5 6 4.8 8.5 9.5 3.5"></polyline></svg>
+                  </span>
+                </span>
+                <span class="prequal-option-sub">LTL & expedited</span>
+              </span>
+            </label>
+            <label class="prequal-choice" for="prequal-choice-7">
+              <input class="prequal-radio" id="prequal-choice-7" name="equipment" required type="radio" value="Hotshot / Power Only">
+              <span class="prequal-option">
+                <span class="prequal-option-header">
+                  <span class="prequal-option-title">Hotshot / Power</span>
+                  <span class="prequal-option-indicator">
+                    <svg viewBox="0 0 12 12"><polyline points="2.5 6 4.8 8.5 9.5 3.5"></polyline></svg>
+                  </span>
+                </span>
+                <span class="prequal-option-sub">Specialized hauls</span>
+              </span>
+            </label>
+            <label class="prequal-choice" for="prequal-choice-8">
+              <input class="prequal-radio" id="prequal-choice-8" name="equipment" required type="radio" value="Multi-Truck Fleet">
+              <span class="prequal-option">
+                <span class="prequal-option-header">
+                  <span class="prequal-option-title">Fleet (2+ Units)</span>
+                  <span class="prequal-option-indicator">
+                    <svg viewBox="0 0 12 12"><polyline points="2.5 6 4.8 8.5 9.5 3.5"></polyline></svg>
+                  </span>
+                </span>
+                <span class="prequal-option-sub">Multi-truck tier</span>
+              </span>
+            </label>
+          </div>
+        </fieldset>
+
+        <!-- Question 4: Current Factoring Situation -->
+        <fieldset class="prequal-fieldset">
+          <legend class="prequal-legend">4. Current factoring situation *</legend>
+          <div class="prequal-grid">
+            <label class="prequal-choice" for="prequal-choice-12">
+              <input class="prequal-radio" id="prequal-choice-12" name="factoring_status" required type="radio" value="not_factoring" checked>
+              <span class="prequal-option">
+                <span class="prequal-option-header">
+                  <span class="prequal-option-title">Not Factoring</span>
+                  <span class="prequal-option-indicator">
+                    <svg viewBox="0 0 12 12"><polyline points="2.5 6 4.8 8.5 9.5 3.5"></polyline></svg>
+                  </span>
+                </span>
+                <span class="prequal-option-sub">Waiting on brokers, need quick cash flow</span>
+              </span>
+            </label>
+            <label class="prequal-choice" for="prequal-choice-13">
+              <input class="prequal-radio" id="prequal-choice-13" name="factoring_status" required type="radio" value="rate_too_high">
+              <span class="prequal-option">
+                <span class="prequal-option-header">
+                  <span class="prequal-option-title">Rate Too High</span>
+                  <span class="prequal-option-indicator">
+                    <svg viewBox="0 0 12 12"><polyline points="2.5 6 4.8 8.5 9.5 3.5"></polyline></svg>
+                  </span>
+                </span>
+                <span class="prequal-option-sub">Paying over 3% or hit with volume penalties</span>
+              </span>
+            </label>
+            <label class="prequal-choice" for="prequal-choice-14">
+              <input class="prequal-radio" id="prequal-choice-14" name="factoring_status" required type="radio" value="locked_contract">
+              <span class="prequal-option">
+                <span class="prequal-option-header">
+                  <span class="prequal-option-title">Locked in Contract</span>
+                  <span class="prequal-option-indicator">
+                    <svg viewBox="0 0 12 12"><polyline points="2.5 6 4.8 8.5 9.5 3.5"></polyline></svg>
+                  </span>
+                </span>
+                <span class="prequal-option-sub">Seeking clean exit to zero-contract terms</span>
+              </span>
+            </label>
+            <label class="prequal-choice" for="prequal-choice-15">
+              <input class="prequal-radio" id="prequal-choice-15" name="factoring_status" required type="radio" value="exploring">
+              <span class="prequal-option">
+                <span class="prequal-option-header">
+                  <span class="prequal-option-title">Exploring Protection</span>
+                  <span class="prequal-option-indicator">
+                    <svg viewBox="0 0 12 12"><polyline points="2.5 6 4.8 8.5 9.5 3.5"></polyline></svg>
+                  </span>
+                </span>
+                <span class="prequal-option-sub">Want broker credit checks & non-recourse</span>
+              </span>
+            </label>
+          </div>
+        </fieldset>
+
+        <!-- Carrier Contact Details (Collapsible) -->
+        <fieldset id="contact-fields-fieldset" class="prequal-fieldset">
+          <legend class="prequal-legend">5. Carrier contact & notification details</legend>
+          <div class="prequal-grid">
+            <div class="prequal-input-wrap">
+              <label class="prequal-input-label" for="company_name">Company / Carrier Legal Name *</label>
+              <input type="text" id="company_name" name="company_name" class="prequal-input" required placeholder="e.g. Apex Freight Logistics LLC">
+            </div>
+            <div class="prequal-input-wrap">
+              <label class="prequal-input-label" for="owner_name">Owner / Driver Contact Name *</label>
+              <input type="text" id="owner_name" name="owner_name" class="prequal-input" required placeholder="Your full name">
+            </div>
+            <div class="prequal-input-wrap">
+              <label class="prequal-input-label" for="phone">Direct Cell Phone *</label>
+              <input type="tel" id="phone" name="phone" class="prequal-input" required placeholder="e.g. (555) 000-0000">
+            </div>
+            <div class="prequal-input-wrap">
+              <label class="prequal-input-label" for="email">Email Address *</label>
+              <input type="email" id="email" name="email" class="prequal-input" required placeholder="dispatch@example.com">
+            </div>
+          </div>
+        </fieldset>
+
+        <button type="submit" id="submit-btn" class="prequal-submit-btn">
+          <span>Check My Factoring Match</span>
+          <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </button>
+
+        <p class="prequal-disclaimer">Operational prequalification only &bull; No impact on credit score &bull; Direct partner routing</p>
+      </form>
+
+      <!-- Loading State -->
+      <div id="loading-state" class="prequal-loading-box" role="status" aria-live="polite" hidden>
+        <div class="prequal-spinner"></div>
+        <h2 style="font-size:20px; font-weight:600; color:#fff; margin:0 0 8px 0;">Underwriting Operating Profile&hellip;</h2>
+        <p style="font-size:14px; color:#8b8c96; margin:0;">Calculating non-recourse eligibility and partner rates.</p>
+      </div>
+
+      <!-- Result 1: Summar Financial Match -->
+      <div id="result-summar" class="prequal-result-box" hidden>
+        <div class="prequal-badge-match">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          Preliminary Partner Match
+        </div>
+        <h2 class="prequal-match-title">Summar Financial (Non-Recourse Shield)</h2>
+        <p class="prequal-match-desc">Your operation qualifies for Summar Financial's true non-recourse factoring. You receive 100% protection if an approved broker shuts down or defaults, plus same-day wire/ACH funding before 2:00 PM EST.</p>
+        
+        <div class="prequal-rep-card">
+          <div class="prequal-rep-avatar">EV</div>
+          <div class="prequal-rep-details">
+            <div class="prequal-rep-name">Elizabeth Valencia</div>
+            <div class="prequal-rep-title">Senior Account Executive &bull; Summar Financial</div>
+            <div class="prequal-rep-contact">
+              <a href="mailto:evalencia@summar.com">evalencia@summar.com</a>
+            </div>
+          </div>
+        </div>
+
+        <a id="summar-calendar-btn" class="prequal-cta-action" href="https://cwlqj04.na1.hs-sales-engage.com/Elizabeth-Valencia" target="_blank" rel="noopener noreferrer">
+          <span>Schedule Priority Onboarding with Elizabeth</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+        </a>
+        <p class="prequal-status-pill" data-email-status>Partner match generated. Confirm your onboarding appointment above.</p>
+      </div>
+
+      <!-- Result 2: BasicBlock Match -->
+      <div id="result-basicblock" class="prequal-result-box" hidden>
+        <div class="prequal-badge-match">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          Preliminary Partner Match
+        </div>
+        <h2 class="prequal-match-title">BasicBlock (Zero-Contract Flexibility)</h2>
+        <p class="prequal-match-desc">Based on your authority age, BasicBlock is your optimal partner. Designed specifically for growing carriers under 90 days with flat transparent rates, zero long-term contracts, and rapid same-day funding.</p>
+        
+        <div class="prequal-rep-card">
+          <div class="prequal-rep-avatar">SL</div>
+          <div class="prequal-rep-details">
+            <div class="prequal-rep-name">Sydney Lock</div>
+            <div class="prequal-rep-title">Carrier Partner Specialist &bull; BasicBlock</div>
+            <div class="prequal-rep-contact">
+              <a href="tel:+14026000318">(402) 600-0318</a> &bull; <a href="mailto:sydney.lock@basicblock.io">sydney.lock@basicblock.io</a>
+            </div>
+          </div>
+        </div>
+
+        <a id="basicblock-activate-btn" class="prequal-cta-action" href="https://na2.hubs.ly/y0y4mS0" target="_blank" rel="noopener noreferrer">
+          <span>Continue to BasicBlock Fast-Track Activation</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+        </a>
+        <p class="prequal-status-pill" data-email-status>Partner match generated. Continue to partner application above.</p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  function initPrequal() {
+    const form = document.getElementById('prequal-form');
+    if (!form || form.dataset.prequalInitialized) return;
+    form.dataset.prequalInitialized = 'true';
+
+    const root = form.closest('.prequal-root');
+    const loading = root.querySelector('#loading-state');
+    const results = {
+      SUMMAR: root.querySelector('#result-summar'),
+      BASICBLOCK: root.querySelector('#result-basicblock')
+    };
+    const error = form.querySelector('#prequal-error');
+    const submit = form.querySelector('#submit-btn');
+    const groups = ['authority_age', 'equipment', 'monthly_gross', 'factoring_status'];
+
+    const LOCAL_ENDPOINT = '/wp-json/empire-dispatch/v1/prequal-submit';
+    const PING_ENDPOINT  = '/wp-json/empire-dispatch/v1/prequal-ping';
+    const BACKUP_WEBHOOK = 'https://n8n.businessautomationempire.online/webhook/trucker-factoring-prequal';
+
+    let pending = false;
+    let prequalSubmissionId = null;
+
+    function show(el, visible) {
+      if (!el) return;
+      el.hidden = !visible;
+      el.classList.toggle('hidden', !visible);
+    }
+
+    function partnerUrl(value, allowedHostname) {
+      if (typeof value !== 'string') return null;
+      try {
+        const url = new URL(value);
+        return url.protocol === 'https:' && url.hostname.toLowerCase() === allowedHostname.toLowerCase() &&
+          !url.username && !url.password && !url.port ? url.href : null;
+      } catch (_) { return null; }
+    }
+
+    // --- SMART PRE-FILL & AUTO-CLICK TRACKING ---
+    const params = new URLSearchParams(window.location.search);
+    const prefillMC      = (params.get('mc') || params.get('mc_dot') || params.get('mcdot') || params.get('dot') || '').trim();
+    const prefillName    = (params.get('name') || params.get('first_name') || params.get('owner_name') || '').trim();
+    const prefillCompany = (params.get('company') || params.get('company_name') || '').trim();
+    const prefillPhone   = (params.get('phone') || '').trim();
+    const prefillEmail   = (params.get('email') || params.get('email_address') || '').trim();
+    const prefillEquip   = (params.get('equipment') || '').trim();
+    const prefillFactor  = (params.get('factoring_status') || '').trim();
+    const utmSource      = (params.get('utm_source') || 'kit_email').trim();
+    const utmMedium      = (params.get('utm_medium') || 'email').trim();
+    const utmCampaign    = (params.get('utm_campaign') || '').trim();
+
+    const mcInput      = document.getElementById('mc_dot');
+    const nameInput    = document.getElementById('owner_name');
+    const companyInput = document.getElementById('company_name');
+    const phoneInput   = document.getElementById('phone');
+    const emailInput   = document.getElementById('email');
+
+    let isPreFilled = false;
+
+    if (prefillMC && mcInput) { mcInput.value = prefillMC; isPreFilled = true; }
+    if (prefillName && nameInput) { nameInput.value = prefillName; isPreFilled = true; }
+    if (prefillCompany && companyInput) { companyInput.value = prefillCompany; isPreFilled = true; }
+    if (prefillPhone && phoneInput) { phoneInput.value = prefillPhone; isPreFilled = true; }
+    if (prefillEmail && emailInput) { emailInput.value = prefillEmail; isPreFilled = true; }
+
+    if (prefillEquip) {
+      const equipRadio = form.querySelector(`input[name="equipment"][value="${prefillEquip}"]`);
+      if (equipRadio) equipRadio.checked = true;
+    }
+    if (prefillFactor) {
+      const factorRadio = form.querySelector(`input[name="factoring_status"][value="${prefillFactor}"]`);
+      if (factorRadio) factorRadio.checked = true;
+    }
+
+    // If arriving with pre-filled carrier profile:
+    if (isPreFilled) {
+      const badge = document.getElementById('carrier-verified-badge');
+      const badgeName = document.getElementById('badge-name-display');
+      const badgeCompany = document.getElementById('badge-company-display');
+      const badgeMC = document.getElementById('badge-mc-display');
+      const mcContainer = document.getElementById('mc-input-container');
+      const contactFieldset = document.getElementById('contact-fields-fieldset');
+      const toggleEditBtn = document.getElementById('toggle-edit-contact');
+
+      if (badge) badge.style.display = 'flex';
+      if (badgeName) badgeName.textContent = prefillName || 'Driver';
+      if (badgeCompany) badgeCompany.textContent = prefillCompany || 'Your Fleet';
+      if (badgeMC) badgeMC.textContent = prefillMC ? (prefillMC.toUpperCase().includes('MC') ? prefillMC : 'MC ' + prefillMC) : 'Verified';
+
+      // Hide MC input container and collapse contact fieldset to remove friction
+      if (mcContainer && prefillMC) mcContainer.style.display = 'none';
+      if (contactFieldset) contactFieldset.style.display = 'none';
+
+      if (toggleEditBtn && contactFieldset) {
+        toggleEditBtn.addEventListener('click', function () {
+          if (contactFieldset.style.display === 'none') {
+            contactFieldset.style.display = 'block';
+            if (mcContainer) mcContainer.style.display = 'block';
+            toggleEditBtn.textContent = 'Hide Details';
+          } else {
+            contactFieldset.style.display = 'none';
+            if (mcContainer && prefillMC) mcContainer.style.display = 'none';
+            toggleEditBtn.textContent = 'Edit Details';
+          }
+        });
+      }
+
+      // INSTANT SILENT PING: Capture lead in WordPress DB immediately on page load!
+      try {
+        fetch(PING_ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            mc_dot: prefillMC,
+            company_name: prefillCompany,
+            owner_name: prefillName,
+            phone: prefillPhone,
+            email: prefillEmail,
+            utm_source: utmSource,
+            utm_medium: utmMedium,
+            utm_campaign: utmCampaign
+          })
+        }).then(function (res) { return res.json(); }).then(function (data) {
+          if (data && data.submission_id) {
+            prequalSubmissionId = data.submission_id;
+          }
+        }).catch(function () {});
+      } catch (_) {}
+    }
+
+    // Google Analytics Outbound Click Tracking for Partner CTAs
+    const summarBtn = root.querySelector('#summar-calendar-btn');
+    if (summarBtn) {
+      summarBtn.addEventListener('click', function() {
+        try {
+          if (typeof gtag === 'function') {
+            gtag('event', 'partner_calendar_click', {
+              'event_category': 'Outbound',
+              'event_label': 'Elizabeth Valencia Calendar',
+              'partner': 'Summar Financial'
+            });
+          } else if (typeof __gaTracker === 'function') {
+            __gaTracker('send', 'event', 'Outbound', 'Click_Summar_Calendar', 'Elizabeth Valencia');
+          }
+        } catch (_) {}
+      });
+    }
+
+    const basicblockBtn = root.querySelector('#basicblock-activate-btn');
+    if (basicblockBtn) {
+      basicblockBtn.addEventListener('click', function() {
+        try {
+          if (typeof gtag === 'function') {
+            gtag('event', 'partner_activation_click', {
+              'event_category': 'Outbound',
+              'event_label': 'BasicBlock Application',
+              'partner': 'BasicBlock'
+            });
+          } else if (typeof __gaTracker === 'function') {
+            __gaTracker('send', 'event', 'Outbound', 'Click_BasicBlock_App', 'BasicBlock');
+          }
+        } catch (_) {}
+      });
+    }
+
+    // Form Submission
+    form.addEventListener('submit', async function (event) {
+      event.preventDefault();
+      if (pending) return;
+      error.hidden = true;
+
+      if (!form.reportValidity()) {
+        const contactFieldset = document.getElementById('contact-fields-fieldset');
+        const mcContainer = document.getElementById('mc-input-container');
+        if (contactFieldset) contactFieldset.style.display = 'block';
+        if (mcContainer) mcContainer.style.display = 'block';
+        return;
+      }
+
+      const formData = new FormData(form);
+      for (const group of groups) {
+        if (formData.getAll(group).length !== 1 || !formData.get(group)) {
+          error.textContent = 'Please select one answer for each question.';
+          error.hidden = false;
+          error.focus();
+          return;
+        }
+      }
+
+      const payload = Object.fromEntries(formData.entries());
+      if (prequalSubmissionId) {
+        payload.submission_id = prequalSubmissionId;
+      }
+      if (utmSource) payload.utm_source = utmSource;
+      if (utmMedium) payload.utm_medium = utmMedium;
+      if (utmCampaign) payload.utm_campaign = utmCampaign;
+
+      pending = true;
+      submit.disabled = true;
+      form.setAttribute('aria-busy', 'true');
+      Object.values(results).forEach(el => show(el, false));
+      show(form, false);
+      show(loading, true);
+
+      let data = null;
+
+      // 1. Submit to WordPress local REST Endpoint (stores in MySQL table & syncs to n8n)
+      try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 12000);
+        const response = await fetch(LOCAL_ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+          signal: controller.signal
+        });
+        clearTimeout(timeout);
+        if (response.ok) {
+          data = await response.json();
+        }
+      } catch (err) {
+        console.warn('Local endpoint bypassed, attempting webhook fallback...', err);
+      }
+
+      // 2. Redundant fallback directly to n8n webhook if local returned error
+      if (!data || data.success !== true) {
+        try {
+          const controller2 = new AbortController();
+          const timeout2 = setTimeout(() => controller2.abort(), 12000);
+          const response2 = await fetch(BACKUP_WEBHOOK, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+            signal: controller2.signal
+          });
+          clearTimeout(timeout2);
+          if (response2.ok) {
+            data = await response2.json();
+          }
+        } catch (err2) {
+          console.error('Fallback webhook error:', err2);
+        }
+      }
+
+      try {
+        if (!data || data.success !== true || !Object.prototype.hasOwnProperty.call(results, data.tier)) {
+          throw new Error('response');
+        }
+
+        // Fire Google Analytics / MonsterInsights conversion event
+        try {
+          if (typeof gtag === 'function') {
+            gtag('event', 'prequal_form_submit', {
+              'event_category': 'Prequalification',
+              'event_label': data.tier,
+              'matched_partner': data.tier
+            });
+          } else if (typeof __gaTracker === 'function') {
+            __gaTracker('send', 'event', 'Prequalification', 'Submit', data.tier);
+          }
+        } catch (_) {}
+
+        const result = results[data.tier];
+        const notice = result.querySelector('[data-email-status]');
+        notice.textContent = data.email_sent === true
+          ? 'Referral email confirmation sent. Please check your inbox and spam folder.'
+          : 'Partner match generated. Confirm your onboarding appointment above.';
+        const isSummar = data.tier === 'SUMMAR';
+        const link = result.querySelector(isSummar ? '#summar-calendar-btn' : '#basicblock-activate-btn');
+        const safeUrl = partnerUrl(isSummar ? data.booking_url : data.activation_url,
+          isSummar ? 'cwlqj04.na1.hs-sales-engage.com' : 'na2.hubs.ly');
+        if (safeUrl) link.href = safeUrl;
+        show(result, true);
+        root.querySelector('#prequal-card').scrollIntoView({
+          behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
+        });
+        result.setAttribute('tabindex', '-1');
+        result.focus({ preventScroll: true });
+      } catch (err) {
+        Object.values(results).forEach(el => show(el, false));
+        show(form, true);
+        error.textContent = 'We could not confirm your result. Please check your connection or call (782) 201-5130 before retrying; your submission may have been processed.';
+        error.hidden = false;
+        error.focus();
+      } finally {
+        show(loading, false);
+        pending = false;
+        submit.disabled = false;
+        form.removeAttribute('aria-busy');
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initPrequal, { once: true });
+  } else {
+    initPrequal();
+  }
+})();
+</script>

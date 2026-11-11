@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Carrier Factoring Prequalification Engine | Empire Dispatch</title><meta name="description" content="Get a preliminary carrier factoring partner match. Final eligibility and terms are subject to partner review."></head><body style="margin:0">
+<!-- Empire Dispatch: self-contained WordPress Custom HTML embed. No API secrets. --><style>
+.prequal-wrapper{box-sizing:border-box;background:#09090b;color:#f4f4f5;font:16px/1.5 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:40px 20px;min-height:100vh;color-scheme:dark}
+.prequal-wrapper *, .prequal-wrapper *::before, .prequal-wrapper *::after{box-sizing:border-box}
+.prequal-wrapper .prequal-inner{max-width:768px;margin:auto}
+.prequal-wrapper header{text-align:center;margin-bottom:32px}
+.prequal-wrapper .eyebrow{color:#fb923c;font-size:14px;font-weight:700}
+.prequal-wrapper h1{font-size:clamp(28px,4vw,40px);line-height:1.2;margin:16px 0;font-weight:800;letter-spacing:-.03em}
+.prequal-wrapper h1 span{color:#fb923c}
+.prequal-wrapper h2{font-size:24px;line-height:1.3;margin:0 0 16px}
+.prequal-wrapper p{color:#b8b8c2;margin:12px 0;overflow-wrap:anywhere}
+.prequal-wrapper #prequal-card{padding:32px;border:1px solid #303036;border-radius:16px;background:#121216}
+.prequal-wrapper fieldset{padding:0 0 24px;margin:0 0 24px;border:0;border-bottom:1px solid #303036;min-width:0}
+.prequal-wrapper legend{padding:0;margin:0 0 16px;color:#e4e4e7;font-weight:700;font-size:16px}
+.prequal-wrapper .prequal-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.prequal-wrapper .prequal-equipment{grid-template-columns:repeat(3,minmax(0,1fr))}
+.prequal-wrapper .prequal-field{display:block;min-width:0;margin:0}
+.prequal-wrapper .prequal-field>span{display:block;color:#d4d4d8;font-size:14px;margin-bottom:8px}
+.prequal-wrapper input:not([type=radio]){display:block;width:100%;min-height:48px;background:#18181c;color:#fff;border:1px solid #52525b;border-radius:10px;padding:12px;font:inherit}
+.prequal-wrapper input::placeholder{color:#a1a1aa}
+.prequal-wrapper input:focus-visible,.prequal-wrapper a:focus-visible,.prequal-wrapper button:focus-visible{outline:3px solid #fdba74;outline-offset:3px}
+#prequal-form .prequal-choice{display:block;position:relative;cursor:pointer;margin:0;min-width:0}
+#prequal-form .prequal-radio{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+#prequal-form .prequal-option{display:flex;flex-direction:column;justify-content:center;box-sizing:border-box;min-height:72px;height:100%;padding:12px;border:1px solid #52525b;border-radius:10px;background:#18181c;color:#e4e4e7;font-size:14px;line-height:1.45}
+#prequal-form .prequal-option>span:first-child{font-weight:650}
+#prequal-form .prequal-option small{display:block;color:#b8b8c2;font-size:14px;margin-top:4px}
+#prequal-form .prequal-radio:checked+.prequal-option{border-color:#f97316;background:rgba(249,115,22,.10);color:#fb923c;box-shadow:inset 0 0 0 1px #f97316}
+#prequal-form .prequal-radio:checked+.prequal-option>span:first-child{color:#fb923c}
+#prequal-form .prequal-radio:checked+.prequal-option>span:first-child::after{content:" ✓"}
+#prequal-form .prequal-radio:focus-visible+.prequal-option{outline:3px solid #fdba74;outline-offset:3px}
+.prequal-wrapper [hidden]{display:none!important}
+.prequal-wrapper button,.prequal-wrapper .prequal-cta{display:flex;align-items:center;justify-content:center;min-height:48px;padding:16px 20px;border:0;border-radius:10px;background:#fb923c;color:#18181b;font:700 16px/1.4 system-ui,sans-serif;text-align:center;text-decoration:none;cursor:pointer}
+.prequal-wrapper #submit-btn{width:100%;margin-top:24px}
+.prequal-wrapper #submit-btn:disabled{opacity:.65;cursor:wait}
+.prequal-wrapper .prequal-note{font-size:14px}
+.prequal-wrapper #prequal-error{margin:0 0 24px;padding:16px;border:1px solid #f87171;border-radius:10px;color:#fecaca;background:#281419}
+.prequal-wrapper #loading-state{padding:48px 0;text-align:center}
+.prequal-wrapper .prequal-result{border:1px solid #52525b;border-radius:12px;padding:24px}
+.prequal-wrapper .prequal-result a:not(.prequal-cta){color:#fdba74;overflow-wrap:anywhere}
+.prequal-wrapper .prequal-result .prequal-cta{margin:24px 0}
+.prequal-wrapper .prequal-rep{padding:16px;background:#18181c;border-radius:10px;margin:24px 0}
+@media(max-width:600px){.prequal-wrapper{padding:24px 16px}.prequal-wrapper #prequal-card{padding:20px}.prequal-wrapper .prequal-grid{grid-template-columns:1fr}.prequal-wrapper .prequal-equipment{grid-template-columns:repeat(2,minmax(0,1fr))}.prequal-wrapper .prequal-result{padding:16px}}
+@media(prefers-reduced-motion:reduce){.prequal-wrapper *{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style><div class="prequal-wrapper"><div class="prequal-inner"><header><div class="eyebrow">45-Second Carrier Factoring Prequalification Engine</div><h1>Find your factoring partner.<br><span>Start with four quick questions.</span></h1><p>Tell us about your operation to get a preliminary partner match. Final approval, rates and terms are determined by the factoring provider.</p><p class="prequal-note">Operational prequalification only · No credit pull by this form</p></header><div id="prequal-card"><form id="prequal-form" aria-describedby="prequal-error"><p id="prequal-error" role="alert" tabindex="-1" hidden></p><div style="margin-bottom:24px"><label class="prequal-field" for="mc_dot"><span>MC number or USDOT number *</span><input type="text" id="mc_dot" name="mc_dot" required placeholder="e.g. MC-123456 or DOT 345678"></label></div><fieldset><legend>1. Authority age *</legend><div class="prequal-grid"><label class="prequal-choice" for="prequal-choice-1"><input class="prequal-radio" id="prequal-choice-1" name="authority_age" required="" type="radio" value="under_90_days"/><span class="prequal-option">
+                    Under 90 Days
+                  </span></label><label class="prequal-choice" for="prequal-choice-2"><input class="prequal-radio" id="prequal-choice-2" name="authority_age" required="" type="radio" value="over_90_days"/><span class="prequal-option">
+                    90+ Days (Active)
+                  </span></label></div></fieldset><fieldset><legend>2. Primary equipment operated *</legend><div class="prequal-grid prequal-equipment"><label class="prequal-choice" for="prequal-choice-3"><input class="prequal-radio" id="prequal-choice-3" name="equipment" required="" type="radio" value="Dry Van (53ft)"/><span class="prequal-option"><span>Dry Van (53')</span><small>Standard Freight</small></span></label><label class="prequal-choice" for="prequal-choice-4"><input class="prequal-radio" id="prequal-choice-4" name="equipment" required="" type="radio" value="Reefer (Temperature-Controlled)"/><span class="prequal-option"><span>Reefer (53')</span><small>Temp Controlled</small></span></label><label class="prequal-choice" for="prequal-choice-5"><input class="prequal-radio" id="prequal-choice-5" name="equipment" required="" type="radio" value="Flatbed / Step Deck"/><span class="prequal-option"><span>Flatbed / Step Deck</span><small>Open Deck Freight</small></span></label><label class="prequal-choice" for="prequal-choice-6"><input class="prequal-radio" id="prequal-choice-6" name="equipment" required="" type="radio" value="26ft Box Truck"/><span class="prequal-option"><span>26ft Box Truck</span><small>Expedited / LTL</small></span></label><label class="prequal-choice" for="prequal-choice-7"><input class="prequal-radio" id="prequal-choice-7" name="equipment" required="" type="radio" value="Hotshot / Power Only"/><span class="prequal-option"><span>Hotshot / Power Only</span><small>Specialized</small></span></label><label class="prequal-choice" for="prequal-choice-8"><input class="prequal-radio" id="prequal-choice-8" name="equipment" required="" type="radio" value="Multi-Truck Fleet"/><span class="prequal-option"><span>Fleet (2+ Trucks)</span><small>Multiple Units</small></span></label></div></fieldset><fieldset><legend>3. Average monthly gross revenue *</legend><div class="prequal-grid"><label class="prequal-choice" for="prequal-choice-9"><input class="prequal-radio" id="prequal-choice-9" name="monthly_gross" required="" type="radio" value="under_10k"/><span class="prequal-option"><span>Under $10,000/mo</span><small>Starting / Part-time</small></span></label><label class="prequal-choice" for="prequal-choice-10"><input class="prequal-radio" id="prequal-choice-10" name="monthly_gross" required="" type="radio" value="10k_25k"/><span class="prequal-option"><span>$10,000 – $25,000/mo</span><small>Standard Solo Truck</small></span></label><label class="prequal-choice" for="prequal-choice-11"><input class="prequal-radio" id="prequal-choice-11" name="monthly_gross" required="" type="radio" value="25k_50k_plus"/><span class="prequal-option"><span>$25,000 – $50,000+/mo</span><small>Team or Fleet Tier</small></span></label></div></fieldset><fieldset><legend>4. Current factoring situation *</legend><div class="prequal-grid"><label class="prequal-choice" for="prequal-choice-12"><input class="prequal-radio" id="prequal-choice-12" name="factoring_status" required="" type="radio" value="not_factoring"/><span class="prequal-option"><span>Not Factoring (Waiting on Brokers)</span><small>Need same-day cash flow for diesel &amp; repairs</small></span></label><label class="prequal-choice" for="prequal-choice-13"><input class="prequal-radio" id="prequal-choice-13" name="factoring_status" required="" type="radio" value="rate_too_high"/><span class="prequal-option"><span>Factoring (Rate too high / Expiring)</span><small>Paying &gt;3% or locked into monthly minimums</small></span></label><label class="prequal-choice" for="prequal-choice-14"><input class="prequal-radio" id="prequal-choice-14" name="factoring_status" required="" type="radio" value="locked_contract"/><span class="prequal-option"><span>Locked in Contract (Need Zero-Contract)</span><small>Hate annual lock-in contracts &amp; penalties</small></span></label><label class="prequal-choice" for="prequal-choice-15"><input class="prequal-radio" id="prequal-choice-15" name="factoring_status" required="" type="radio" value="exploring"/><span class="prequal-option"><span>Exploring (Want Broker Credit Checks)</span><small>Seeking non-recourse default protection</small></span></label></div></fieldset><fieldset><legend>5. Carrier contact &amp; notification</legend><div class="prequal-grid"><label class="prequal-field" for="company_name"><span>Company / carrier legal name *</span><input type="text" id="company_name" name="company_name" required placeholder="e.g. Apex Freight Logistics LLC"></label><label class="prequal-field" for="owner_name"><span>Owner / driver contact name *</span><input type="text" id="owner_name" name="owner_name" required placeholder="Your name"></label><label class="prequal-field" for="phone"><span>Direct cell phone *</span><input type="tel" id="phone" name="phone" required placeholder="e.g. (555) 000-0000"></label><label class="prequal-field" for="email"><span>Email address *</span><input type="email" id="email" name="email" required placeholder="dispatch@example.com"></label></div></fieldset><button type="submit" id="submit-btn">Check my preliminary partner match →</button><p class="prequal-note">Submitting shares these details with Empire Dispatch for referral routing and contact by the matched factoring partner. Questions? Call (782) 201-5130.</p></form><div id="loading-state" role="status" aria-live="polite" hidden><h2>Checking your operating profile…</h2><p>Please wait while we request your partner match.</p></div><div id="result-summar" class="prequal-result" hidden><p class="eyebrow">Preliminary partner match</p><h2>Potential match: Summar Financial</h2><p>Based on your answers, Summar Financial may be a suitable partner. This is not credit approval. Eligibility, rates, non-recourse exclusions and funding timing are subject to partner review and agreement.</p><div class="prequal-rep"><strong>Elizabeth Valencia</strong><p>Summar Financial<br><a href="mailto:evalencia@summar.com">evalencia@summar.com</a></p></div><a id="summar-calendar-btn" class="prequal-cta" href="https://cwLqJ04.na1.hs-sales-engage.com/" target="_blank" rel="noopener noreferrer">Schedule onboarding time ↗</a><p data-email-status>Partner match returned. Email sending has not been confirmed; use the partner link above to continue.</p></div><div id="result-basicblock" class="prequal-result" hidden><p class="eyebrow">Preliminary partner match</p><h2>Potential match: BasicBlock</h2><p>Based on your answers, BasicBlock may be a suitable partner. This is not credit approval. Confirm current rates, contract terms and eligibility directly with the partner before applying.</p><div class="prequal-rep"><strong>Sydney Lock | BasicBlock</strong><p><a href="tel:+14026000318">(402) 600-0318</a><br><a href="mailto:sydney.lock@basicblock.io">sydney.lock@basicblock.io</a></p></div><a id="basicblock-activate-btn" class="prequal-cta" href="https://na2.hubs.ly/H08PBVP0" target="_blank" rel="noopener noreferrer">Continue to partner application ↗</a><p data-email-status>Partner match returned. Email sending has not been confirmed; use the partner link above to continue.</p></div></div></div></div><script>
+(function () {
+  'use strict';
+  function initPrequal() {
+    const form = document.getElementById('prequal-form');
+    if (!form || form.dataset.prequalInitialized) return;
+    form.dataset.prequalInitialized = 'true';
+    const root = form.closest('.prequal-wrapper');
+    const loading = root.querySelector('#loading-state');
+    const results = {
+      SUMMAR: root.querySelector('#result-summar'),
+      BASICBLOCK: root.querySelector('#result-basicblock')
+    };
+    const error = form.querySelector('#prequal-error');
+    const submit = form.querySelector('#submit-btn');
+    const groups = ['authority_age', 'equipment', 'monthly_gross', 'factoring_status'];
+    // Keep this contract aligned with the existing n8n workflow.
+    const WEBHOOK_URL = 'https://n8n.businessautomationempire.online/webhook/trucker-factoring-prequal';
+    let pending = false;
+    function show(el, visible) {
+      el.hidden = !visible;
+      el.classList.toggle('hidden', !visible);
+    }
+    // API responses cannot replace partner links with arbitrary destinations.
+    function partnerUrl(value, allowedHostname) {
+      if (typeof value !== 'string') return null;
+      try {
+        const url = new URL(value);
+        return url.protocol === 'https:' && url.hostname === allowedHostname &&
+          !url.username && !url.password && !url.port ? url.href : null;
+      } catch (_) { return null; }
+    }
+    form.addEventListener('submit', async function (event) {
+      event.preventDefault();
+      if (pending) return;
+      error.hidden = true;
+      if (!form.reportValidity()) return;
+      const formData = new FormData(form);
+      for (const group of groups) {
+        if (formData.getAll(group).length !== 1 || !formData.get(group)) {
+          error.textContent = 'Please select one answer for each question.';
+          error.hidden = false;
+          error.focus();
+          return;
+        }
+      }
+      const payload = Object.fromEntries(formData.entries());
+      pending = true;
+      submit.disabled = true;
+      form.setAttribute('aria-busy', 'true');
+      Object.values(results).forEach(el => show(el, false));
+      show(form, false);
+      show(loading, true);
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 30000);
+      try {
+        const response = await fetch(WEBHOOK_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+          signal: controller.signal
+        });
+        if (!response.ok) throw new Error('http');
+        let data;
+        try { data = await response.json(); } catch (_) { throw new Error('json'); }
+        if (!data || data.success !== true || !Object.prototype.hasOwnProperty.call(results, data.tier)) {
+          throw new Error('response');
+        }
+        const result = results[data.tier];
+        const notice = result.querySelector('[data-email-status]');
+        notice.textContent = data.email_sent === true
+          ? 'The server confirmed the referral email was sent. Check your inbox and spam folder.'
+          : 'Partner match returned. Email sending has not been confirmed; use the partner link above to continue.';
+        const isSummar = data.tier === 'SUMMAR';
+        const link = result.querySelector(isSummar ? '#summar-calendar-btn' : '#basicblock-activate-btn');
+        const safeUrl = partnerUrl(isSummar ? data.booking_url : data.activation_url,
+          isSummar ? 'cwlqj04.na1.hs-sales-engage.com' : 'na2.hubs.ly');
+        if (safeUrl) link.href = safeUrl;
+        show(result, true);
+        root.querySelector('#prequal-card').scrollIntoView({
+          behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
+        });
+        result.setAttribute('tabindex', '-1');
+        result.focus({ preventScroll: true });
+      } catch (err) {
+        Object.values(results).forEach(el => show(el, false));
+        show(form, true);
+        // A timeout is ambiguous: never claim the lead/email was not processed.
+        error.textContent = err.name === 'AbortError'
+          ? 'The request timed out. Your submission may have been processed. Please call (782) 201-5130 before retrying.'
+          : 'We could not confirm your result. Please check your connection or call (782) 201-5130 before retrying; your submission may have been processed.';
+        error.hidden = false;
+        error.focus();
+      } finally {
+        clearTimeout(timeout);
+        show(loading, false);
+        pending = false;
+        submit.disabled = false;
+        form.removeAttribute('aria-busy');
+      }
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initPrequal, { once: true });
+  } else {
+    initPrequal();
+  }
+})();
+</script>
+
+</body></html>

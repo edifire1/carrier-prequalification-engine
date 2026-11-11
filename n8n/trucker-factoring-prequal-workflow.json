@@ -1,0 +1,203 @@
+{
+  "name": "Trucker Factoring Prequal & Warm Handoff to Elizabeth (Summar Financial)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "trucker-factoring-prequal",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook - Prequal Form",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        100,
+        300
+      ],
+      "webhookId": "trucker-factoring-prequal"
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $json.body || $json;\n\nconst company_name = body.company_name || 'Carrier Client';\nconst owner_name = body.owner_name || 'Driver / Owner';\nconst phone = body.phone || 'N/A';\nconst email = body.email || '';\nconst mc_dot = body.mc_dot || 'Pending';\nconst equipment = body.equipment || 'Dry Van';\nconst factoring_status = body.factoring_status || 'not_factoring';\nconst monthly_gross = body.monthly_gross || '10k_25k';\nconst authority_age = body.authority_age || 'over_90_days';\n\n// Prequalification Engine Logic:\n// 1. BasicBlock for:\n//    - New authority (< 90 days)\n//    - Low monthly volume (< $10,000/mo)\n//    - Contract-phobic / locked into strict contract / selective spot factoring only\n// 2. Summar Financial for:\n//    - Established authority (> 90 days)\n//    - Mid-to-high volume ($10,000 - $25,000 or $25,000 - $50,000+/mo)\n//    - Running Semi (Dry Van / Reefer / Flatbed) or Box Truck\n\nlet qualifiedTier = 'SUMMAR';\nlet reason = 'Qualified for Summar Financial premium non-recourse credit protection and same-day funding.';\n\nif (authority_age === 'under_90_days' || monthly_gross === 'under_10k' || factoring_status === 'locked_contract') {\n    qualifiedTier = 'BASICBLOCK';\n    reason = 'Best match for BasicBlock 2.5% flat non-recourse rate with zero contracts and $5 same-day RTP.';\n}\n\nreturn {\n    json: {\n        company_name,\n        owner_name,\n        phone,\n        email,\n        mc_dot,\n        equipment,\n        factoring_status,\n        monthly_gross,\n        authority_age,\n        qualifiedTier,\n        reason,\n        timestamp: new Date().toISOString()\n    }\n};"
+      },
+      "id": "prequal-engine",
+      "name": "Prequalification Engine",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        320,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "check-summar",
+              "leftValue": "={{ $json.qualifiedTier }}",
+              "rightValue": "SUMMAR",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "tier-switch",
+      "name": "Is Summar Qualified?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        540,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "evalencia@summar.com",
+        "ccList": "={{ $json.email }}, edifire1@gmail.com",
+        "subject": "=Introduction: {{ $json.company_name }} (MC# {{ $json.mc_dot }}) <> Summar Financial",
+        "message": "=Hi Elizabeth,\n\nPlease meet {{ $json.owner_name }}, owner of {{ $json.company_name }} (MC/DOT: {{ $json.mc_dot }}).\n\nThey recently completed our carrier prequalification intake through Empire Dispatch and are looking for true non-recourse invoice factoring, same-day funding before 2:00 PM EST, and broker credit checks via Summar Financial.\n\nCarrier Summary:\n\u2022 Carrier / Company: {{ $json.company_name }}\n\u2022 Owner / Contact: {{ $json.owner_name }}\n\u2022 Phone: {{ $json.phone }}\n\u2022 Email: {{ $json.email }}\n\u2022 MC / DOT: {{ $json.mc_dot }}\n\u2022 Equipment Type: {{ $json.equipment }}\n\u2022 Monthly Gross Revenue: {{ $json.monthly_gross }}\n\u2022 Current Factoring Status: {{ $json.factoring_status }}\n\u2022 Referral Source: Empire Dispatch / Edward Ssewanyana (Partner Profile)\n\n{{ $json.owner_name }} \u2014 Elizabeth Valencia is our dedicated Account Executive at Summar Financial. She will take great care of your account, run instant credit checks on your brokers, and structure your SUMMAR SHIELD non-recourse rate agreement.\n\nElizabeth, please connect with {{ $json.owner_name }} to structure their agreement under Empire Dispatch's partner referral profile.\n\nBest regards,\nEdward Ssewanyana\nManaging Director | Empire Dispatch\nhttps://www.dispatch.businessautomationempire.com/ | (782) 201-5130",
+        "options": {}
+      },
+      "id": "gmail-summar",
+      "name": "Send Intro Email to Elizabeth (Summar)",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        760,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"success\": true,\n  \"tier\": \"SUMMAR\",\n  \"email_sent\": true,\n  \"title\": \"You Are Prequalified for Summar Shield Non-Recourse Factoring!\",\n  \"message\": \"Congratulations! Your operating profile qualifies for same-day non-recourse funding with Summar Financial with zero monthly volume minimums.\",\n  \"rep_name\": \"Elizabeth Valencia\",\n  \"rep_title\": \"Senior Account Executive | Summar Financial\",\n  \"rep_email\": \"evalencia@summar.com\",\n  \"booking_url\": \"https://cwLqJ04.na1.hs-sales-engage.com/\",\n  \"fuel_program\": \"Load Connex Fuel Cards + Weekly Diesel Rebates\",\n  \"next_steps\": \"A formal warm introduction email has been dispatched directly to Elizabeth Valencia and CC'd to your inbox. You can also pick a direct time on Elizabeth's priority calendar right now.\"\n}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "respond-summar",
+      "name": "Respond Summar Qualified",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        980,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.email }}",
+        "ccList": "edifire1@gmail.com",
+        "subject": "=Instant 2.5% Flat Rate Factoring Activation (Zero Contract) - {{ $json.company_name }}",
+        "message": "=Hi {{ $json.owner_name }},\n\nThank you for completing our Carrier Prequalification Intake at Empire Dispatch.\n\nBased on your operating criteria, you are approved for BasicBlock\u2019s 2.5% Flat Rate, Non-Recourse Factoring with NO long-term contracts.\n\nWhy this is your best fit:\n\u2022 2.5% Flat Rate (Available for new authorities & growing fleets)\n\u2022 NO Long-Term Contracts (Stay as long or short as you like)\n\u2022 NO Monthly Volume Minimums (Spot factor only the loads you want)\n\u2022 Same-Day RTP Payouts ($5 flat) & 50% Fuel Advances on valid rate cons\n\nYour Priority Activation Link:\n\ud83d\udc49 https://na2.hubs.ly/H08PBVP0\n\nYour Dedicated Partner Specialist:\nSydney Lock | BasicBlock\nDirect: (402) 600-0318 | sydney.lock@basicblock.io\n\nOur dispatch team is here to assist with booking high-paying loads as soon as your funding profile is active!\n\nBest regards,\nEdward Ssewanyana\nEmpire Dispatch | dispatch.businessautomationempire.com",
+        "options": {}
+      },
+      "id": "gmail-basicblock",
+      "name": "Send BasicBlock Activation Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        760,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"success\": true,\n  \"tier\": \"BASICBLOCK\",\n  \"email_sent\": true,\n  \"title\": \"Approved for 2.5% Flat Rate Non-Recourse Factoring!\",\n  \"message\": \"Your profile is approved for BasicBlock's zero-contract, 2.5% flat rate factoring program with $5 same-day RTP.\",\n  \"rep_name\": \"Sydney Lock\",\n  \"rep_title\": \"Partner Specialist | BasicBlock\",\n  \"rep_phone\": \"(402) 600-0318\",\n  \"activation_url\": \"https://na2.hubs.ly/H08PBVP0\",\n  \"next_steps\": \"Your activation link and agreement details have been emailed to you. Click below to activate your account in under 3 minutes with zero lock-in contracts.\"\n}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "respond-basicblock",
+      "name": "Respond BasicBlock Approved",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        980,
+        420
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook - Prequal Form": {
+      "main": [
+        [
+          {
+            "node": "Prequalification Engine",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prequalification Engine": {
+      "main": [
+        [
+          {
+            "node": "Is Summar Qualified?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Summar Qualified?": {
+      "main": [
+        [
+          {
+            "node": "Send Intro Email to Elizabeth (Summar)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send BasicBlock Activation Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Intro Email to Elizabeth (Summar)": {
+      "main": [
+        [
+          {
+            "node": "Respond Summar Qualified",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send BasicBlock Activation Email": {
+      "main": [
+        [
+          {
+            "node": "Respond BasicBlock Approved",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

@@ -69,5 +69,18 @@ Converts cold carrier outreach (e.g., 10,000+ carrier email lists) into high-int
 
 ---
 
+## 🎨 Design & Attribution
+
+The visual interface and design system for the Carrier Prequalification Engine were created using the **Unslop** design system by Damir Sokolovsky ([@heydamir](https://x.com/heydamir), [https://github.com/heydamir/unslop](https://github.com/heydamir/unslop)), licensed under [Creative Commons Attribution 4.0 International (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/).
+
+It establishes:
+- Purposeful graphite neutral ramp (`#0d0e11` root, `#141519` container, `#191b20` option cards) with quiet hairline borders (`rgba(255, 255, 255, 0.08)`).
+- Highway amber (`#f59e0b`) accent for selections and primary match action.
+- Native, accessible option cards with visible focus outlines and touch targets exceeding 44x44 CSS px.
+- Honest, transparent prefill state language ("Details prefilled — please review").
+
+---
+
 ## 📄 License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+Interface design is credited to Damir Sokolovsky per CC BY 4.0.

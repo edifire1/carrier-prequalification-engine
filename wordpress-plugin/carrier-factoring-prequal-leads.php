@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Empire_Carrier_Prequal_Manager {
 
-    const DB_VERSION = '1.2.0';
+    const DB_VERSION = '1.2.1';
     const TABLE_NAME = 'carrier_prequal_submissions';
 
     public function __construct() {
@@ -26,6 +26,34 @@ class Empire_Carrier_Prequal_Manager {
         add_action( 'admin_post_export_prequal_leads_csv', array( $this, 'export_leads_csv' ) );
         add_action( 'wp_ajax_update_prequal_lead_status', array( $this, 'ajax_update_lead_status' ) );
         add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
+        add_filter( 'request', array( $this, 'prevent_wp_reserved_var_collision' ), 1 );
+        add_filter( 'the_content', array( $this, 'preserve_inline_scripts' ), 999 );
+    }
+
+    /**
+     * Prevent WordPress convert_chars / wptexturize from corrupting inline scripts inside post content.
+     */
+    public function preserve_inline_scripts( $content ) {
+        if ( false === strpos( $content, '<script' ) ) {
+            return $content;
+        }
+        return preg_replace_callback( '/<script\b[^>]*>(.*?)<\/script>/is', function( $matches ) {
+            return str_replace( array( '&#038;&#038;', '&#038;', '&amp;&amp;', '&amp;' ), array( '&&', '&', '&&', '&' ), $matches[0] );
+        }, $content );
+    }
+
+    /**
+     * Prevent WordPress from treating ?name=... in campaign prefill links as a post slug query (which causes 404s).
+     */
+    public function prevent_wp_reserved_var_collision( $query_vars ) {
+        $uri = $_SERVER['REQUEST_URI'] ?? '';
+        if ( strpos( $uri, 'carrier-factoring-prequalification-engine' ) !== false ) {
+            if ( isset( $query_vars['name'] ) ) {
+                unset( $query_vars['name'] );
+                $query_vars['pagename'] = 'carrier-factoring-prequalification-engine';
+            }
+        }
+        return $query_vars;
     }
 
     public static function get_table_name() {
@@ -53,6 +81,7 @@ class Empire_Carrier_Prequal_Manager {
 
         $sql = "CREATE TABLE $table_name (
             id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+            prequal_token varchar(64) NOT NULL DEFAULT '',
             submission_time datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
             mc_number varchar(100) NOT NULL DEFAULT '',
             company_name varchar(150) NOT NULL DEFAULT '',
@@ -76,6 +105,7 @@ class Empire_Carrier_Prequal_Manager {
             n8n_sync_status varchar(100) NOT NULL DEFAULT 'Pending',
             PRIMARY KEY  (id),
             KEY submission_time (submission_time),
+            KEY prequal_token (prequal_token),
             KEY matched_partner (matched_partner),
             KEY lead_status (lead_status),
             KEY email (email),
@@ -147,9 +177,18 @@ class Empire_Carrier_Prequal_Manager {
         }
 
         if ( $existing_id ) {
+            $existing_token = $wpdb->get_var( $wpdb->prepare(
+                "SELECT prequal_token FROM $table_name WHERE id = %d",
+                $existing_id
+            ) );
+            if ( empty( $existing_token ) ) {
+                $existing_token = wp_generate_password( 32, false );
+                $wpdb->update( $table_name, array( 'prequal_token' => $existing_token ), array( 'id' => $existing_id ) );
+            }
             return new WP_REST_Response( array(
                 'success'       => true,
                 'submission_id' => (int) $existing_id,
+                'prequal_token' => $existing_token,
                 'status'        => 'existing_session'
             ), 200 );
         }
@@ -161,9 +200,12 @@ class Empire_Carrier_Prequal_Manager {
         }
         $user_agent = sanitize_text_field( substr( $_SERVER['HTTP_USER_AGENT'] ?? '', 0, 500 ) );
 
+        $prequal_token = wp_generate_password( 32, false );
+
         $wpdb->insert(
             $table_name,
             array(
+                'prequal_token'    => $prequal_token,
                 'submission_time'  => current_time( 'mysql' ),
                 'mc_number'        => $mc_number,
                 'company_name'     => $company_name,
@@ -188,7 +230,7 @@ class Empire_Carrier_Prequal_Manager {
             ),
             array(
                 '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
-                '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s'
+                '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s'
             )
         );
 
@@ -197,6 +239,7 @@ class Empire_Carrier_Prequal_Manager {
         return new WP_REST_Response( array(
             'success'       => true,
             'submission_id' => $submission_id,
+            'prequal_token' => $prequal_token,
             'status'        => 'lead_captured_on_open'
         ), 200 );
     }
@@ -212,6 +255,7 @@ class Empire_Carrier_Prequal_Manager {
         }
 
         $submission_id    = intval( $params['submission_id'] ?? 0 );
+        $prequal_token    = sanitize_text_field( $params['prequal_token'] ?? '' );
         $mc_number        = sanitize_text_field( $params['mc_dot'] ?? $params['mc_number'] ?? $params['mc'] ?? '' );
         $company_name     = sanitize_text_field( $params['company_name'] ?? $params['company'] ?? '' );
         $first_name       = sanitize_text_field( $params['owner_name'] ?? $params['first_name'] ?? $params['name'] ?? '' );
@@ -225,10 +269,50 @@ class Empire_Carrier_Prequal_Manager {
         $utm_medium       = sanitize_text_field( $params['utm_medium'] ?? '' );
         $utm_campaign     = sanitize_text_field( $params['utm_campaign'] ?? '' );
 
-        if ( empty( $email ) || empty( $mc_number ) ) {
+        if ( empty( $email ) || ! is_email( $email ) || empty( $mc_number ) || empty( $company_name ) || empty( $first_name ) || empty( $phone ) ) {
             return new WP_REST_Response( array(
                 'success' => false,
-                'message' => 'MC/DOT number and Email address are required.'
+                'message' => 'All contact fields (MC/DOT, Company, Owner Name, Phone, and valid Email) are required.'
+            ), 400 );
+        }
+
+        // Strict allowed values check
+        $allowed_authority = array( 'under_90_days', 'over_90_days' );
+        if ( ! in_array( $authority_age, $allowed_authority, true ) ) {
+            return new WP_REST_Response( array(
+                'success' => false,
+                'message' => 'Invalid authority age selection.'
+            ), 400 );
+        }
+
+        $allowed_revenue = array( 'under_10k', 'under_15k', '10k_25k', '15k_35k', '25k_50k_plus', '35k_75k', '75k_plus' );
+        if ( ! in_array( $monthly_gross, $allowed_revenue, true ) ) {
+            return new WP_REST_Response( array(
+                'success' => false,
+                'message' => 'Invalid monthly revenue selection.'
+            ), 400 );
+        }
+
+        $allowed_equipment = array(
+            'Dry Van (53ft)', 'Dry Van (53\')',
+            'Reefer (Temperature-Controlled)', 'Reefer (53\')',
+            'Flatbed / Step Deck', 'Flatbed / Step',
+            '26ft Box Truck',
+            'Hotshot / Power Only', 'Hotshot / Power',
+            'Multi-Truck Fleet', 'Fleet (2+ Units)'
+        );
+        if ( ! in_array( $equipment, $allowed_equipment, true ) ) {
+            return new WP_REST_Response( array(
+                'success' => false,
+                'message' => 'Invalid equipment selection.'
+            ), 400 );
+        }
+
+        $allowed_factoring = array( 'not_factoring', 'rate_too_high', 'locked_contract', 'contract_locked', 'exploring', 'clean_never' );
+        if ( ! in_array( $factoring_status, $allowed_factoring, true ) ) {
+            return new WP_REST_Response( array(
+                'success' => false,
+                'message' => 'Invalid factoring status selection.'
             ), 400 );
         }
 
@@ -276,15 +360,27 @@ class Empire_Carrier_Prequal_Manager {
             'n8n_sync_status'  => 'Pending'
         );
 
-        if ( $submission_id && $wpdb->get_var( $wpdb->prepare( "SELECT id FROM $table_name WHERE id = %d", $submission_id ) ) ) {
+        $verified_record_id = 0;
+        if ( $submission_id && ! empty( $prequal_token ) ) {
+            $verified_record_id = (int) $wpdb->get_var( $wpdb->prepare(
+                "SELECT id FROM $table_name WHERE id = %d AND prequal_token = %s",
+                $submission_id,
+                $prequal_token
+            ) );
+        }
+
+        if ( $verified_record_id ) {
             $wpdb->update(
                 $table_name,
                 $lead_data,
-                array( 'id' => $submission_id )
+                array( 'id' => $verified_record_id )
             );
+            $submission_id = $verified_record_id;
         } else {
+            $prequal_token = wp_generate_password( 32, false );
+            $lead_data['prequal_token']   = $prequal_token;
             $lead_data['submission_time'] = current_time( 'mysql' );
-            $lead_data['notes'] = '';
+            $lead_data['notes']           = '';
             $wpdb->insert( $table_name, $lead_data );
             $submission_id = $wpdb->insert_id;
         }
@@ -356,6 +452,7 @@ class Empire_Carrier_Prequal_Manager {
             'activation_url'  => ! $is_summar ? $partner_url : null,
             'email_sent'      => $email_sent,
             'submission_id'   => $submission_id,
+            'prequal_token'   => $prequal_token,
             'message'         => 'Carrier prequalification record saved and processed successfully.'
         ), 200 );
     }

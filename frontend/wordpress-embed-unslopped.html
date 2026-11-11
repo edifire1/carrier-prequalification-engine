@@ -1,4 +1,10 @@
-<!-- Empire Dispatch: Unslopped High-Craft Carrier Factoring Prequalification Engine -->
+<!-- wp:html -->
+<!--
+  Empire Dispatch Carrier Factoring Prequalification Engine
+  Design System adapted from Unslop by Damir Sokolovsky (https://github.com/heydamir/unslop)
+  Licensed under Creative Commons Attribution 4.0 International (CC BY 4.0)
+  https://creativecommons.org/licenses/by/4.0/
+-->
 <style>
 /* --- UNSLOP DESIGN SYSTEM: GRAPHITE & HIGHWAY AMBER --- */
 .prequal-root {
@@ -44,9 +50,9 @@
   background-color: #f59e0b;
 }
 .prequal-title {
-  font-size: 32px;
+  font-size: 30px;
   font-weight: 700;
-  line-height: 1.2;
+  line-height: 1.25;
   letter-spacing: -0.02em;
   color: #fcfcfc;
   margin: 0 0 12px 0;
@@ -67,10 +73,10 @@
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
 }
 
-/* Carrier Verified Top Bar */
-.carrier-verified-bar {
+/* Carrier Prefill Notification Bar */
+.carrier-prefill-bar {
   background-color: #181a20;
-  border: 1px solid rgba(16, 185, 129, 0.25);
+  border: 1px solid rgba(245, 158, 11, 0.25);
   border-radius: 12px;
   padding: 16px 20px;
   margin-bottom: 28px;
@@ -79,44 +85,41 @@
   justify-content: space-between;
   gap: 16px;
 }
-.carrier-verified-info {
+.carrier-prefill-info {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
-.carrier-verified-tag {
+.carrier-prefill-tag {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   font-size: 11px;
   font-weight: 600;
-  color: #34d399;
+  color: #f59e0b;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
-.carrier-verified-tag .status-pulse {
-  width: 7px;
-  height: 7px;
+.carrier-prefill-tag .status-dot {
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
-  background-color: #10b981;
+  background-color: #f59e0b;
 }
-.carrier-verified-name {
-  font-size: 16px;
+.carrier-prefill-name {
+  font-size: 15px;
   font-weight: 600;
   color: #f4f4f6;
 }
-.carrier-verified-name span {
-  color: #f59e0b;
-}
-.carrier-verified-meta {
+.carrier-prefill-meta {
   font-size: 13px;
   color: #8b8c96;
 }
-.carrier-verified-meta strong {
+.carrier-prefill-meta strong {
   color: #d1d2dc;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
-.carrier-verified-toggle {
+.carrier-prefill-toggle {
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.12);
   color: #a1a1aa;
@@ -128,10 +131,21 @@
   white-space: nowrap;
   transition: all 0.15s ease;
 }
-.carrier-verified-toggle:hover {
+.carrier-prefill-toggle:hover {
   background: rgba(255, 255, 255, 0.05);
   color: #ffffff;
   border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Partial Prefill Note */
+.prequal-partial-note {
+  background: rgba(245, 158, 11, 0.06);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 24px;
+  font-size: 13px;
+  color: #d1d2dc;
 }
 
 /* Fieldsets & Questions */
@@ -149,7 +163,7 @@
   letter-spacing: -0.01em;
 }
 
-/* Grid Layouts */
+/* Grid Layouts & WP Autop reset */
 .prequal-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -158,14 +172,21 @@
 .prequal-grid-3 {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
+.prequal-grid > br,
+.prequal-grid > p,
+.prequal-grid-3 > br,
+.prequal-grid-3 > p {
+  display: none !important;
+}
 
-/* Option Cards (Radios) */
+/* Option Cards (Radios) - Native accessible label hit target */
 .prequal-choice {
   display: block;
   position: relative;
   cursor: pointer;
   margin: 0;
   user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 .prequal-radio {
   position: absolute;
@@ -179,20 +200,23 @@
   border: 0;
 }
 .prequal-option {
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  min-height: 72px;
+  min-height: 52px;
   height: 100%;
   padding: 14px 16px;
   background-color: #191b20;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 10px;
-  transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+}
+.prequal-option * {
+  pointer-events: none;
 }
 .prequal-choice:hover .prequal-option {
   background-color: #1f2128;
-  border-color: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.16);
 }
 .prequal-radio:focus-visible + .prequal-option {
   outline: 2px solid #f59e0b;
@@ -240,7 +264,7 @@
 
 /* Checked State */
 .prequal-radio:checked + .prequal-option {
-  background-color: rgba(245, 158, 11, 0.07);
+  background-color: rgba(245, 158, 11, 0.08);
   border-color: #f59e0b;
   box-shadow: inset 0 0 0 1px #f59e0b;
 }
@@ -299,117 +323,115 @@
   justify-content: center;
   gap: 8px;
   width: 100%;
-  min-height: 50px;
-  padding: 14px 24px;
-  margin-top: 28px;
+  min-height: 48px;
+  padding: 14px 20px;
   background-color: #f59e0b;
   color: #0d0e11;
   border: 0;
-  border-radius: 10px;
+  border-radius: 8px;
   font-size: 15px;
-  font-weight: 650;
+  font-weight: 600;
   cursor: pointer;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 2px 8px rgba(245, 158, 11, 0.25);
-  transition: background-color 0.15s ease, transform 0.08s ease;
+  transition: background-color 0.15s ease, opacity 0.15s ease;
+  margin-top: 24px;
 }
 .prequal-submit-btn:hover {
-  background-color: #fbbf24;
+  background-color: #d97706;
 }
-.prequal-submit-btn:active {
-  transform: translateY(1px);
+.prequal-submit-btn:focus-visible {
+  outline: 3px solid #fbbf24;
+  outline-offset: 3px;
 }
 .prequal-submit-btn:disabled {
   opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
+  cursor: wait;
 }
 .prequal-submit-btn svg {
   width: 16px;
   height: 16px;
+  fill: none;
   stroke: currentColor;
   stroke-width: 2.2;
-  fill: none;
 }
 
+/* Disclaimer & Error */
 .prequal-disclaimer {
   font-size: 12px;
-  line-height: 1.45;
   color: #71717a;
-  margin: 16px 0 0 0;
   text-align: center;
-}
-
-/* Error Alert */
-.prequal-alert-error {
-  padding: 14px 18px;
-  margin-bottom: 24px;
-  background-color: #241315;
-  border: 1px solid rgba(239, 68, 68, 0.35);
-  border-radius: 10px;
-  color: #fca5a5;
-  font-size: 13.5px;
+  margin: 16px 0 0 0;
   line-height: 1.4;
 }
+.prequal-error-box {
+  background-color: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 8px;
+  padding: 14px 16px;
+  color: #fca5a5;
+  font-size: 13px;
+  margin-bottom: 24px;
+}
+.prequal-error-box:focus {
+  outline: 2px solid #ef4444;
+}
 
-/* Loading State */
+/* Loading Box */
 .prequal-loading-box {
   padding: 48px 24px;
   text-align: center;
 }
 .prequal-spinner {
-  width: 36px;
-  height: 36px;
-  margin: 0 auto 16px auto;
+  width: 32px;
+  height: 32px;
   border: 3px solid rgba(255, 255, 255, 0.1);
   border-top-color: #f59e0b;
   border-radius: 50%;
   animation: prequal-spin 0.8s linear infinite;
+  margin: 0 auto 20px auto;
 }
 @keyframes prequal-spin {
   to { transform: rotate(360deg); }
 }
 
-/* Results Certification Card */
+/* Results Box */
 .prequal-result-box {
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 14px;
-  padding: 28px;
-  background-color: #181a20;
+  padding: 8px 0;
 }
 .prequal-badge-match {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: rgba(16, 185, 129, 0.12);
-  border: 1px solid rgba(16, 185, 129, 0.25);
-  color: #34d399;
+  background-color: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  color: #f59e0b;
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   padding: 4px 10px;
   border-radius: 6px;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 }
 .prequal-match-title {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 700;
   color: #ffffff;
-  margin: 0 0 8px 0;
+  margin: 0 0 12px 0;
+  letter-spacing: -0.01em;
 }
 .prequal-match-desc {
-  font-size: 14.5px;
-  line-height: 1.5;
-  color: #a1a1aa;
+  font-size: 14px;
+  line-height: 1.55;
+  color: #b3b4bf;
   margin: 0 0 24px 0;
 }
 .prequal-rep-card {
   display: flex;
   align-items: center;
   gap: 16px;
-  background: #111216;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 10px;
+  background-color: #181a20;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
   padding: 16px 20px;
   margin-bottom: 24px;
 }
@@ -417,17 +439,20 @@
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: #24262e;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background-color: #262933;
+  color: #f59e0b;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
-  color: #f59e0b;
+  flex-shrink: 0;
+  border: 1px solid rgba(245, 158, 11, 0.2);
 }
 .prequal-rep-details {
-  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 .prequal-rep-name {
   font-size: 15px;
@@ -435,14 +460,13 @@
   color: #ffffff;
 }
 .prequal-rep-title {
-  font-size: 13px;
+  font-size: 12px;
   color: #8b8c96;
 }
 .prequal-rep-contact {
-  display: flex;
-  gap: 14px;
-  margin-top: 4px;
   font-size: 13px;
+  color: #f59e0b;
+  margin-top: 4px;
 }
 .prequal-rep-contact a {
   color: #f59e0b;
@@ -456,38 +480,52 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
+  width: 100%;
   min-height: 48px;
-  padding: 14px 24px;
+  padding: 14px 20px;
   background-color: #f59e0b;
   color: #0d0e11;
-  border-radius: 10px;
+  border-radius: 8px;
   font-size: 15px;
-  font-weight: 650;
+  font-weight: 600;
   text-decoration: none;
-  cursor: pointer;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  margin-bottom: 16px;
   transition: background-color 0.15s ease;
 }
 .prequal-cta-action:hover {
-  background-color: #fbbf24;
+  background-color: #d97706;
+}
+.prequal-cta-action:focus-visible {
+  outline: 3px solid #fbbf24;
+  outline-offset: 3px;
 }
 .prequal-status-pill {
-  font-size: 12.5px;
+  font-size: 12px;
   color: #8b8c96;
-  margin-top: 16px;
   text-align: center;
+  margin: 0;
 }
 
-[hidden] { display: none !important; }
+/* Hidden Utility */
+.prequal-root [hidden] {
+  display: none !important;
+}
 
 /* Responsive */
 @media (max-width: 640px) {
-  .prequal-root { padding: 24px 14px; }
-  .prequal-card { padding: 20px 16px; }
-  .prequal-title { font-size: 26px; }
-  .prequal-grid { grid-template-columns: 1fr; }
-  .prequal-grid-3 { grid-template-columns: 1fr; }
-  .carrier-verified-bar {
+  .prequal-root {
+    padding: 24px 16px;
+  }
+  .prequal-card {
+    padding: 20px;
+  }
+  .prequal-grid {
+    grid-template-columns: 1fr;
+  }
+  .prequal-grid-3 {
+    grid-template-columns: 1fr;
+  }
+  .carrier-prefill-bar {
     flex-direction: column;
     align-items: flex-start;
   }
@@ -502,44 +540,48 @@
 
 <div class="prequal-root">
   <div class="prequal-container">
+
     <header class="prequal-header">
       <div class="prequal-eyebrow">
         <span class="dot"></span>
-        Carrier Factoring Prequalification
+        <span>Carrier Factoring Match</span>
       </div>
-      <h1 class="prequal-title">Find your factoring partner.</h1>
-      <p class="prequal-subtitle">Confirm your authority and monthly revenue to see your non-recourse rate in 10 seconds.</p>
+      <h1 class="prequal-title">Find a factoring partner for your fleet</h1>
+      <p class="prequal-subtitle">Answer a few questions for a preliminary partner match. Final eligibility, rates, and terms are determined by the partner.</p>
     </header>
 
     <div class="prequal-card" id="prequal-card">
 
-      <!-- Dynamic Carrier Pre-fill Notification Banner -->
-      <div id="carrier-verified-badge" class="carrier-verified-bar" style="display:none;">
-        <div class="carrier-verified-info">
-          <div class="carrier-verified-tag">
-            <span class="status-pulse"></span>
-            Profile Verified
+      <!-- Prefilled Carrier Details Bar (Collapsed summary when full profile supplied) -->
+      <div id="carrier-prefill-banner" class="carrier-prefill-bar" style="display: none;">
+        <div class="carrier-prefill-info">
+          <div class="carrier-prefill-tag">
+            <span class="status-dot"></span>
+            <span>Details prefilled — please review</span>
           </div>
-          <div class="carrier-verified-name">
-            Welcome, <span id="badge-name-display">Driver</span> &bull; <span id="badge-company-display">Fleet</span>
+          <div class="carrier-prefill-name">
+            <span id="badge-name-display">Driver</span> • <span id="badge-company-display">Carrier</span>
           </div>
-          <div class="carrier-verified-meta">
-            Authority: <strong id="badge-mc-display">MC Verified</strong>
+          <div class="carrier-prefill-meta">
+            MC/DOT: <strong id="badge-mc-display"></strong>
           </div>
         </div>
-        <div>
-          <button type="button" id="toggle-edit-contact" class="carrier-verified-toggle">
-            Edit Details
-          </button>
-        </div>
+        <button type="button" id="toggle-edit-contact" class="carrier-prefill-toggle" aria-expanded="false" aria-controls="contact-fields-fieldset">
+          Edit details
+        </button>
       </div>
 
-      <form id="prequal-form" aria-describedby="prequal-error">
-        <div id="prequal-error" class="prequal-alert-error" role="alert" tabindex="-1" hidden></div>
+      <!-- Partial Prefill Notification Note (Shown when some, but not all required fields exist) -->
+      <div id="carrier-partial-note" class="prequal-partial-note" style="display: none;">
+        Some details prefilled from your invitation. Please complete any remaining fields below.
+      </div>
+
+      <form id="prequal-form" novalidate aria-describedby="prequal-error">
+        <div id="prequal-error" class="prequal-error-box" role="alert" tabindex="-1" hidden></div>
 
         <div id="mc-input-container" class="prequal-input-wrap">
           <label class="prequal-input-label" for="mc_dot">MC Number or USDOT Number *</label>
-          <input type="text" id="mc_dot" name="mc_dot" class="prequal-input" required placeholder="e.g. MC-123456 or DOT 345678">
+          <input type="text" id="mc_dot" name="mc_dot" class="prequal-input" required autocomplete="off" placeholder="e.g. MC-123456 or DOT 345678">
         </div>
 
         <!-- Question 1: Authority Age -->
@@ -551,11 +593,11 @@
               <span class="prequal-option">
                 <span class="prequal-option-header">
                   <span class="prequal-option-title">Under 90 Days</span>
-                  <span class="prequal-option-indicator">
+                  <span class="prequal-option-indicator" aria-hidden="true">
                     <svg viewBox="0 0 12 12"><polyline points="2.5 6 4.8 8.5 9.5 3.5"></polyline></svg>
                   </span>
                 </span>
-                <span class="prequal-option-sub">New authority welcome (flat rate)</span>
+                <span class="prequal-option-sub">New authority welcome</span>
               </span>
             </label>
             <label class="prequal-choice" for="prequal-choice-2">
@@ -563,7 +605,7 @@
               <span class="prequal-option">
                 <span class="prequal-option-header">
                   <span class="prequal-option-title">90+ Days (Active)</span>
-                  <span class="prequal-option-indicator">
+                  <span class="prequal-option-indicator" aria-hidden="true">
                     <svg viewBox="0 0 12 12"><polyline points="2.5 6 4.8 8.5 9.5 3.5"></polyline></svg>
                   </span>
                 </span>
@@ -582,11 +624,11 @@
               <span class="prequal-option">
                 <span class="prequal-option-header">
                   <span class="prequal-option-title">Under $10k/mo</span>
-                  <span class="prequal-option-indicator">
+                  <span class="prequal-option-indicator" aria-hidden="true">
                     <svg viewBox="0 0 12 12"><polyline points="2.5 6 4.8 8.5 9.5 3.5"></polyline></svg>
                   </span>
                 </span>
-                <span class="prequal-option-sub">Part-time or launch</span>
+                <span class="prequal-option-sub">Part-time or startup</span>
               </span>
             </label>
             <label class="prequal-choice" for="prequal-choice-10">
@@ -594,7 +636,7 @@
               <span class="prequal-option">
                 <span class="prequal-option-header">
                   <span class="prequal-option-title">$10k – $25k/mo</span>
-                  <span class="prequal-option-indicator">
+                  <span class="prequal-option-indicator" aria-hidden="true">
                     <svg viewBox="0 0 12 12"><polyline points="2.5 6 4.8 8.5 9.5 3.5"></polyline></svg>
                   </span>
                 </span>
@@ -606,7 +648,7 @@
               <span class="prequal-option">
                 <span class="prequal-option-header">
                   <span class="prequal-option-title">$25k – $50k+/mo</span>
-                  <span class="prequal-option-indicator">
+                  <span class="prequal-option-indicator" aria-hidden="true">
                     <svg viewBox="0 0 12 12"><polyline points="2.5 6 4.8 8.5 9.5 3.5"></polyline></svg>
                   </span>
                 </span>
@@ -621,11 +663,11 @@
           <legend class="prequal-legend">3. Primary equipment operated *</legend>
           <div class="prequal-grid prequal-grid-3">
             <label class="prequal-choice" for="prequal-choice-3">
-              <input class="prequal-radio" id="prequal-choice-3" name="equipment" required type="radio" value="Dry Van (53ft)" checked>
+              <input class="prequal-radio" id="prequal-choice-3" name="equipment" required type="radio" value="Dry Van (53ft)">
               <span class="prequal-option">
                 <span class="prequal-option-header">
                   <span class="prequal-option-title">Dry Van (53')</span>
-                  <span class="prequal-option-indicator">
+                  <span class="prequal-option-indicator" aria-hidden="true">
                     <svg viewBox="0 0 12 12"><polyline points="2.5 6 4.8 8.5 9.5 3.5"></polyline></svg>
                   </span>
                 </span>
@@ -637,7 +679,7 @@
               <span class="prequal-option">
                 <span class="prequal-option-header">
                   <span class="prequal-option-title">Reefer (53')</span>
-                  <span class="prequal-option-indicator">
+                  <span class="prequal-option-indicator" aria-hidden="true">
                     <svg viewBox="0 0 12 12"><polyline points="2.5 6 4.8 8.5 9.5 3.5"></polyline></svg>
                   </span>
                 </span>
@@ -649,7 +691,7 @@
               <span class="prequal-option">
                 <span class="prequal-option-header">
                   <span class="prequal-option-title">Flatbed / Step</span>
-                  <span class="prequal-option-indicator">
+                  <span class="prequal-option-indicator" aria-hidden="true">
                     <svg viewBox="0 0 12 12"><polyline points="2.5 6 4.8 8.5 9.5 3.5"></polyline></svg>
                   </span>
                 </span>
@@ -661,11 +703,11 @@
               <span class="prequal-option">
                 <span class="prequal-option-header">
                   <span class="prequal-option-title">26ft Box Truck</span>
-                  <span class="prequal-option-indicator">
+                  <span class="prequal-option-indicator" aria-hidden="true">
                     <svg viewBox="0 0 12 12"><polyline points="2.5 6 4.8 8.5 9.5 3.5"></polyline></svg>
                   </span>
                 </span>
-                <span class="prequal-option-sub">LTL & expedited</span>
+                <span class="prequal-option-sub">LTL &amp; expedited</span>
               </span>
             </label>
             <label class="prequal-choice" for="prequal-choice-7">
@@ -673,7 +715,7 @@
               <span class="prequal-option">
                 <span class="prequal-option-header">
                   <span class="prequal-option-title">Hotshot / Power</span>
-                  <span class="prequal-option-indicator">
+                  <span class="prequal-option-indicator" aria-hidden="true">
                     <svg viewBox="0 0 12 12"><polyline points="2.5 6 4.8 8.5 9.5 3.5"></polyline></svg>
                   </span>
                 </span>
@@ -685,7 +727,7 @@
               <span class="prequal-option">
                 <span class="prequal-option-header">
                   <span class="prequal-option-title">Fleet (2+ Units)</span>
-                  <span class="prequal-option-indicator">
+                  <span class="prequal-option-indicator" aria-hidden="true">
                     <svg viewBox="0 0 12 12"><polyline points="2.5 6 4.8 8.5 9.5 3.5"></polyline></svg>
                   </span>
                 </span>
@@ -700,11 +742,11 @@
           <legend class="prequal-legend">4. Current factoring situation *</legend>
           <div class="prequal-grid">
             <label class="prequal-choice" for="prequal-choice-12">
-              <input class="prequal-radio" id="prequal-choice-12" name="factoring_status" required type="radio" value="not_factoring" checked>
+              <input class="prequal-radio" id="prequal-choice-12" name="factoring_status" required type="radio" value="not_factoring">
               <span class="prequal-option">
                 <span class="prequal-option-header">
                   <span class="prequal-option-title">Not Factoring</span>
-                  <span class="prequal-option-indicator">
+                  <span class="prequal-option-indicator" aria-hidden="true">
                     <svg viewBox="0 0 12 12"><polyline points="2.5 6 4.8 8.5 9.5 3.5"></polyline></svg>
                   </span>
                 </span>
@@ -716,7 +758,7 @@
               <span class="prequal-option">
                 <span class="prequal-option-header">
                   <span class="prequal-option-title">Rate Too High</span>
-                  <span class="prequal-option-indicator">
+                  <span class="prequal-option-indicator" aria-hidden="true">
                     <svg viewBox="0 0 12 12"><polyline points="2.5 6 4.8 8.5 9.5 3.5"></polyline></svg>
                   </span>
                 </span>
@@ -728,7 +770,7 @@
               <span class="prequal-option">
                 <span class="prequal-option-header">
                   <span class="prequal-option-title">Locked in Contract</span>
-                  <span class="prequal-option-indicator">
+                  <span class="prequal-option-indicator" aria-hidden="true">
                     <svg viewBox="0 0 12 12"><polyline points="2.5 6 4.8 8.5 9.5 3.5"></polyline></svg>
                   </span>
                 </span>
@@ -740,62 +782,62 @@
               <span class="prequal-option">
                 <span class="prequal-option-header">
                   <span class="prequal-option-title">Exploring Protection</span>
-                  <span class="prequal-option-indicator">
+                  <span class="prequal-option-indicator" aria-hidden="true">
                     <svg viewBox="0 0 12 12"><polyline points="2.5 6 4.8 8.5 9.5 3.5"></polyline></svg>
                   </span>
                 </span>
-                <span class="prequal-option-sub">Want broker credit checks & non-recourse</span>
+                <span class="prequal-option-sub">Want broker credit checks &amp; non-recourse</span>
               </span>
             </label>
           </div>
         </fieldset>
 
-        <!-- Carrier Contact Details (Collapsible) -->
+        <!-- Carrier Contact Details (Collapsible when full profile prefilled) -->
         <fieldset id="contact-fields-fieldset" class="prequal-fieldset">
-          <legend class="prequal-legend">5. Carrier contact & notification details</legend>
+          <legend class="prequal-legend">5. Carrier contact &amp; notification details</legend>
           <div class="prequal-grid">
             <div class="prequal-input-wrap">
               <label class="prequal-input-label" for="company_name">Company / Carrier Legal Name *</label>
-              <input type="text" id="company_name" name="company_name" class="prequal-input" required placeholder="e.g. Apex Freight Logistics LLC">
+              <input type="text" id="company_name" name="company_name" class="prequal-input" required autocomplete="organization" placeholder="e.g. Apex Freight Logistics LLC">
             </div>
             <div class="prequal-input-wrap">
               <label class="prequal-input-label" for="owner_name">Owner / Driver Contact Name *</label>
-              <input type="text" id="owner_name" name="owner_name" class="prequal-input" required placeholder="Your full name">
+              <input type="text" id="owner_name" name="owner_name" class="prequal-input" required autocomplete="name" placeholder="Your full name">
             </div>
             <div class="prequal-input-wrap">
               <label class="prequal-input-label" for="phone">Direct Cell Phone *</label>
-              <input type="tel" id="phone" name="phone" class="prequal-input" required placeholder="e.g. (555) 000-0000">
+              <input type="tel" id="phone" name="phone" class="prequal-input" required autocomplete="tel" placeholder="e.g. (555) 000-0000">
             </div>
             <div class="prequal-input-wrap">
               <label class="prequal-input-label" for="email">Email Address *</label>
-              <input type="email" id="email" name="email" class="prequal-input" required placeholder="dispatch@example.com">
+              <input type="email" id="email" name="email" class="prequal-input" required autocomplete="email" placeholder="dispatch@example.com">
             </div>
           </div>
         </fieldset>
 
         <button type="submit" id="submit-btn" class="prequal-submit-btn">
           <span>Check My Factoring Match</span>
-          <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
         </button>
 
-        <p class="prequal-disclaimer">Operational prequalification only &bull; No impact on credit score &bull; Direct partner routing</p>
+        <p class="prequal-disclaimer">Operational prequalification only &bull; No impact on credit score &bull; Direct partner routing &bull; Questions? Call (782) 201-5130</p>
       </form>
 
       <!-- Loading State -->
       <div id="loading-state" class="prequal-loading-box" role="status" aria-live="polite" hidden>
         <div class="prequal-spinner"></div>
-        <h2 style="font-size:20px; font-weight:600; color:#fff; margin:0 0 8px 0;">Underwriting Operating Profile&hellip;</h2>
-        <p style="font-size:14px; color:#8b8c96; margin:0;">Calculating non-recourse eligibility and partner rates.</p>
+        <h2 style="font-size:20px; font-weight:600; color:#fff; margin:0 0 8px 0;">Evaluating Operating Profile&hellip;</h2>
+        <p style="font-size:14px; color:#8b8c96; margin:0;">Finding your matched factoring partner.</p>
       </div>
 
       <!-- Result 1: Summar Financial Match -->
       <div id="result-summar" class="prequal-result-box" hidden>
         <div class="prequal-badge-match">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
           Preliminary Partner Match
         </div>
         <h2 class="prequal-match-title">Summar Financial (Non-Recourse Shield)</h2>
-        <p class="prequal-match-desc">Your operation qualifies for Summar Financial's true non-recourse factoring. You receive 100% protection if an approved broker shuts down or defaults, plus same-day wire/ACH funding before 2:00 PM EST.</p>
+        <p class="prequal-match-desc">Your operation qualifies for Summar Financial's true non-recourse factoring. You receive 100% protection if an approved broker defaults, plus same-day wire/ACH funding before 2:00 PM EST.</p>
         
         <div class="prequal-rep-card">
           <div class="prequal-rep-avatar">EV</div>
@@ -810,19 +852,19 @@
 
         <a id="summar-calendar-btn" class="prequal-cta-action" href="https://cwlqj04.na1.hs-sales-engage.com/Elizabeth-Valencia" target="_blank" rel="noopener noreferrer">
           <span>Schedule Priority Onboarding with Elizabeth</span>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
         </a>
-        <p class="prequal-status-pill" data-email-status>Partner match generated. Confirm your onboarding appointment above.</p>
+        <p class="prequal-status-pill" data-email-status>Partner match returned. Email sending has not been confirmed; use the partner link above to continue.</p>
       </div>
 
       <!-- Result 2: BasicBlock Match -->
       <div id="result-basicblock" class="prequal-result-box" hidden>
         <div class="prequal-badge-match">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
           Preliminary Partner Match
         </div>
         <h2 class="prequal-match-title">BasicBlock (Zero-Contract Flexibility)</h2>
-        <p class="prequal-match-desc">Based on your authority age, BasicBlock is your optimal partner. Designed specifically for growing carriers under 90 days with flat transparent rates, zero long-term contracts, and rapid same-day funding.</p>
+        <p class="prequal-match-desc">Based on your operating profile, BasicBlock is your optimal partner. Designed specifically for growing carriers under 90 days with flat transparent rates, zero long-term contracts, and rapid same-day funding.</p>
         
         <div class="prequal-rep-card">
           <div class="prequal-rep-avatar">SL</div>
@@ -837,9 +879,9 @@
 
         <a id="basicblock-activate-btn" class="prequal-cta-action" href="https://na2.hubs.ly/y0y4mS0" target="_blank" rel="noopener noreferrer">
           <span>Continue to BasicBlock Fast-Track Activation</span>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
         </a>
-        <p class="prequal-status-pill" data-email-status>Partner match generated. Continue to partner application above.</p>
+        <p class="prequal-status-pill" data-email-status>Partner match returned. Email sending has not been confirmed; use the partner link above to continue.</p>
       </div>
 
     </div>
@@ -853,16 +895,23 @@
   function initPrequal() {
     const form = document.getElementById('prequal-form');
     if (!form || form.dataset.prequalInitialized) return;
-    form.dataset.prequalInitialized = 'true';
 
     const root = form.closest('.prequal-root');
+    if (!root) return;
+
     const loading = root.querySelector('#loading-state');
     const results = {
       SUMMAR: root.querySelector('#result-summar'),
       BASICBLOCK: root.querySelector('#result-basicblock')
     };
-    const error = form.querySelector('#prequal-error');
-    const submit = form.querySelector('#submit-btn');
+    const errorBox = form.querySelector('#prequal-error');
+    const submitBtn = form.querySelector('#submit-btn');
+    const contactFieldset = root.querySelector('#contact-fields-fieldset');
+    const mcContainer = root.querySelector('#mc-input-container');
+    const prefillBanner = root.querySelector('#carrier-prefill-banner');
+    const partialNote = root.querySelector('#carrier-partial-note');
+    const toggleEditBtn = root.querySelector('#toggle-edit-contact');
+
     const groups = ['authority_age', 'equipment', 'monthly_gross', 'factoring_status'];
 
     const LOCAL_ENDPOINT = '/wp-json/empire-dispatch/v1/prequal-submit';
@@ -871,6 +920,7 @@
 
     let pending = false;
     let prequalSubmissionId = null;
+    let prequalToken = null;
 
     function show(el, visible) {
       if (!el) return;
@@ -881,13 +931,38 @@
     function partnerUrl(value, allowedHostname) {
       if (typeof value !== 'string') return null;
       try {
-        const url = new URL(value);
-        return url.protocol === 'https:' && url.hostname.toLowerCase() === allowedHostname.toLowerCase() &&
-          !url.username && !url.password && !url.port ? url.href : null;
+        const parsed = new URL(value);
+        if (parsed.protocol !== 'https:') return null;
+        if (parsed.hostname.toLowerCase() !== allowedHostname.toLowerCase()) return null;
+        if (parsed.username || parsed.password || parsed.port) return null;
+        return parsed.href;
       } catch (_) { return null; }
     }
 
-    // --- SMART PRE-FILL & AUTO-CLICK TRACKING ---
+    // Whitelist allowed values
+    const ALLOWED_EQUIPMENT = [
+      'Dry Van (53ft)', 'Reefer (Temperature-Controlled)',
+      'Flatbed / Step Deck', '26ft Box Truck',
+      'Hotshot / Power Only', 'Multi-Truck Fleet'
+    ];
+    const ALLOWED_FACTORING = [
+      'not_factoring', 'rate_too_high', 'locked_contract', 'exploring'
+    ];
+    const ALLOWED_AUTHORITY = ['under_90_days', 'over_90_days'];
+    const ALLOWED_REVENUE   = ['under_10k', '10k_25k', '25k_50k_plus'];
+
+    function selectRadioSafe(name, value, allowed) {
+      if (!value || !allowed.includes(value)) return;
+      const inputs = form.querySelectorAll('input[type="radio"][name="' + name + '"]');
+      for (let i = 0; i < inputs.length; i++) {
+        if (inputs[i].value === value) {
+          inputs[i].checked = true;
+          break;
+        }
+      }
+    }
+
+    // --- PRE-FILL HANDLING ---
     const params = new URLSearchParams(window.location.search);
     const prefillMC      = (params.get('mc') || params.get('mc_dot') || params.get('mcdot') || params.get('dot') || '').trim();
     const prefillName    = (params.get('name') || params.get('first_name') || params.get('owner_name') || '').trim();
@@ -896,67 +971,67 @@
     const prefillEmail   = (params.get('email') || params.get('email_address') || '').trim();
     const prefillEquip   = (params.get('equipment') || '').trim();
     const prefillFactor  = (params.get('factoring_status') || '').trim();
+    const prefillAuth    = (params.get('authority_age') || '').trim();
+    const prefillGross   = (params.get('monthly_gross') || '').trim();
     const utmSource      = (params.get('utm_source') || 'kit_email').trim();
     const utmMedium      = (params.get('utm_medium') || 'email').trim();
     const utmCampaign    = (params.get('utm_campaign') || '').trim();
 
-    const mcInput      = document.getElementById('mc_dot');
-    const nameInput    = document.getElementById('owner_name');
-    const companyInput = document.getElementById('company_name');
-    const phoneInput   = document.getElementById('phone');
-    const emailInput   = document.getElementById('email');
+    const mcInput      = root.querySelector('#mc_dot');
+    const nameInput    = root.querySelector('#owner_name');
+    const companyInput = root.querySelector('#company_name');
+    const phoneInput   = root.querySelector('#phone');
+    const emailInput   = root.querySelector('#email');
 
-    let isPreFilled = false;
+    if (prefillMC) { if (mcInput) mcInput.value = prefillMC; }
+    if (prefillName) { if (nameInput) nameInput.value = prefillName; }
+    if (prefillCompany) { if (companyInput) companyInput.value = prefillCompany; }
+    if (prefillPhone) { if (phoneInput) phoneInput.value = prefillPhone; }
+    if (prefillEmail) { if (emailInput) emailInput.value = prefillEmail; }
 
-    if (prefillMC && mcInput) { mcInput.value = prefillMC; isPreFilled = true; }
-    if (prefillName && nameInput) { nameInput.value = prefillName; isPreFilled = true; }
-    if (prefillCompany && companyInput) { companyInput.value = prefillCompany; isPreFilled = true; }
-    if (prefillPhone && phoneInput) { phoneInput.value = prefillPhone; isPreFilled = true; }
-    if (prefillEmail && emailInput) { emailInput.value = prefillEmail; isPreFilled = true; }
+    selectRadioSafe('equipment', prefillEquip, ALLOWED_EQUIPMENT);
+    selectRadioSafe('factoring_status', prefillFactor, ALLOWED_FACTORING);
+    selectRadioSafe('authority_age', prefillAuth, ALLOWED_AUTHORITY);
+    selectRadioSafe('monthly_gross', prefillGross, ALLOWED_REVENUE);
 
-    if (prefillEquip) {
-      const equipRadio = form.querySelector(`input[name="equipment"][value="${prefillEquip}"]`);
-      if (equipRadio) equipRadio.checked = true;
-    }
-    if (prefillFactor) {
-      const factorRadio = form.querySelector(`input[name="factoring_status"][value="${prefillFactor}"]`);
-      if (factorRadio) factorRadio.checked = true;
-    }
+    // Full prefill check: ALL 5 contact fields required
+    const allFilled = [prefillMC, prefillCompany, prefillName, prefillPhone, prefillEmail].every(Boolean);
+    const hasCompleteContact = allFilled ? (prefillEmail.indexOf('@') > 0) : false;
+    const hasAnyPrefill = Boolean(
+      prefillMC || prefillCompany || prefillName || prefillPhone || prefillEmail
+    );
 
-    // If arriving with pre-filled carrier profile:
-    if (isPreFilled) {
-      const badge = document.getElementById('carrier-verified-badge');
-      const badgeName = document.getElementById('badge-name-display');
-      const badgeCompany = document.getElementById('badge-company-display');
-      const badgeMC = document.getElementById('badge-mc-display');
-      const mcContainer = document.getElementById('mc-input-container');
-      const contactFieldset = document.getElementById('contact-fields-fieldset');
-      const toggleEditBtn = document.getElementById('toggle-edit-contact');
-
-      if (badge) badge.style.display = 'flex';
-      if (badgeName) badgeName.textContent = prefillName || 'Driver';
-      if (badgeCompany) badgeCompany.textContent = prefillCompany || 'Your Fleet';
-      if (badgeMC) badgeMC.textContent = prefillMC ? (prefillMC.toUpperCase().includes('MC') ? prefillMC : 'MC ' + prefillMC) : 'Verified';
-
-      // Hide MC input container and collapse contact fieldset to remove friction
-      if (mcContainer && prefillMC) mcContainer.style.display = 'none';
-      if (contactFieldset) contactFieldset.style.display = 'none';
-
-      if (toggleEditBtn && contactFieldset) {
-        toggleEditBtn.addEventListener('click', function () {
-          if (contactFieldset.style.display === 'none') {
-            contactFieldset.style.display = 'block';
-            if (mcContainer) mcContainer.style.display = 'block';
-            toggleEditBtn.textContent = 'Hide Details';
-          } else {
-            contactFieldset.style.display = 'none';
-            if (mcContainer && prefillMC) mcContainer.style.display = 'none';
-            toggleEditBtn.textContent = 'Edit Details';
-          }
-        });
+    if (hasCompleteContact) {
+      if (prefillBanner) {
+        prefillBanner.style.display = 'flex';
+        const nameDisp = root.querySelector('#badge-name-display');
+        const compDisp = root.querySelector('#badge-company-display');
+        const mcDisp   = root.querySelector('#badge-mc-display');
+        if (nameDisp) nameDisp.textContent = prefillName;
+        if (compDisp) compDisp.textContent = prefillCompany;
+        if (mcDisp) mcDisp.textContent = prefillMC.toUpperCase().includes('MC') ? prefillMC : 'MC ' + prefillMC;
       }
+      if (contactFieldset) contactFieldset.style.display = 'none';
+      if (mcContainer) mcContainer.style.display = 'none';
 
-      // INSTANT SILENT PING: Capture lead in WordPress DB immediately on page load!
+      if (toggleEditBtn) {
+        if (contactFieldset) {
+          toggleEditBtn.addEventListener('click', function () {
+            const isHidden = contactFieldset.style.display === 'none';
+            contactFieldset.style.display = isHidden ? 'block' : 'none';
+            if (mcContainer) mcContainer.style.display = isHidden ? 'block' : 'none';
+            toggleEditBtn.textContent = isHidden ? 'Hide details' : 'Edit details';
+            toggleEditBtn.setAttribute('aria-expanded', isHidden ? 'true' : 'false');
+          });
+        }
+      }
+    } else if (hasAnyPrefill) {
+      // Partial prefill: keep fields visible and editable!
+      if (partialNote) partialNote.style.display = 'block';
+    }
+
+    // Ping tracking on load if identifying info exists
+    if (hasAnyPrefill) {
       try {
         fetch(PING_ENDPOINT, {
           method: 'POST',
@@ -972,17 +1047,38 @@
             utm_campaign: utmCampaign
           })
         }).then(function (res) { return res.json(); }).then(function (data) {
-          if (data && data.submission_id) {
-            prequalSubmissionId = data.submission_id;
+          if (data) {
+            if (data.submission_id) {
+              prequalSubmissionId = data.submission_id;
+              prequalToken = data.prequal_token || null;
+            }
           }
         }).catch(function () {});
       } catch (_) {}
     }
 
-    // Google Analytics Outbound Click Tracking for Partner CTAs
+    // Capture-phase invalid listener: unhide any hidden field if validation triggers
+    form.addEventListener('invalid', function (e) {
+      if (contactFieldset) {
+        if (contactFieldset.style.display === 'none') {
+          contactFieldset.style.display = 'block';
+          if (toggleEditBtn) {
+            toggleEditBtn.textContent = 'Hide details';
+            toggleEditBtn.setAttribute('aria-expanded', 'true');
+          }
+        }
+      }
+      if (mcContainer) {
+        if (mcContainer.style.display === 'none') {
+          mcContainer.style.display = 'block';
+        }
+      }
+    }, true);
+
+    // Outbound CTA tracking
     const summarBtn = root.querySelector('#summar-calendar-btn');
     if (summarBtn) {
-      summarBtn.addEventListener('click', function() {
+      summarBtn.addEventListener('click', function () {
         try {
           if (typeof gtag === 'function') {
             gtag('event', 'partner_calendar_click', {
@@ -999,7 +1095,7 @@
 
     const basicblockBtn = root.querySelector('#basicblock-activate-btn');
     if (basicblockBtn) {
-      basicblockBtn.addEventListener('click', function() {
+      basicblockBtn.addEventListener('click', function () {
         try {
           if (typeof gtag === 'function') {
             gtag('event', 'partner_activation_click', {
@@ -1018,36 +1114,53 @@
     form.addEventListener('submit', async function (event) {
       event.preventDefault();
       if (pending) return;
-      error.hidden = true;
+      errorBox.hidden = true;
 
-      if (!form.reportValidity()) {
-        const contactFieldset = document.getElementById('contact-fields-fieldset');
-        const mcContainer = document.getElementById('mc-input-container');
+      // Reveal hidden fields before validating
+      const mcVal = (mcInput ? mcInput.value : '').trim();
+      const compVal = (companyInput ? companyInput.value : '').trim();
+      const nameVal = (nameInput ? nameInput.value : '').trim();
+      const phoneVal = (phoneInput ? phoneInput.value : '').trim();
+      const emailVal = (emailInput ? emailInput.value : '').trim();
+
+      if (!mcVal || !compVal || !nameVal || !phoneVal || !emailVal) {
         if (contactFieldset) contactFieldset.style.display = 'block';
         if (mcContainer) mcContainer.style.display = 'block';
+        if (toggleEditBtn) toggleEditBtn.textContent = 'Hide details';
+        errorBox.textContent = 'Please fill in all required contact and MC/DOT fields.';
+        errorBox.hidden = false;
+        errorBox.focus();
+        return;
+      }
+
+      if (!emailVal.includes('@') || !emailVal.includes('.')) {
+        if (contactFieldset) contactFieldset.style.display = 'block';
+        errorBox.textContent = 'Please enter a valid email address.';
+        errorBox.hidden = false;
+        if (emailInput) emailInput.focus();
         return;
       }
 
       const formData = new FormData(form);
       for (const group of groups) {
-        if (formData.getAll(group).length !== 1 || !formData.get(group)) {
-          error.textContent = 'Please select one answer for each question.';
-          error.hidden = false;
-          error.focus();
+        const val = formData.get(group);
+        if (!val) {
+          errorBox.textContent = 'Please select one answer for each of the 4 profile questions.';
+          errorBox.hidden = false;
+          errorBox.focus();
           return;
         }
       }
 
       const payload = Object.fromEntries(formData.entries());
-      if (prequalSubmissionId) {
-        payload.submission_id = prequalSubmissionId;
-      }
+      if (prequalSubmissionId) payload.submission_id = prequalSubmissionId;
+      if (prequalToken) payload.prequal_token = prequalToken;
       if (utmSource) payload.utm_source = utmSource;
       if (utmMedium) payload.utm_medium = utmMedium;
       if (utmCampaign) payload.utm_campaign = utmCampaign;
 
       pending = true;
-      submit.disabled = true;
+      submitBtn.disabled = true;
       form.setAttribute('aria-busy', 'true');
       Object.values(results).forEach(el => show(el, false));
       show(form, false);
@@ -1055,7 +1168,7 @@
 
       let data = null;
 
-      // 1. Submit to WordPress local REST Endpoint (stores in MySQL table & syncs to n8n)
+      // 1. Submit to WordPress local REST Endpoint
       try {
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), 12000);
@@ -1073,7 +1186,7 @@
         console.warn('Local endpoint bypassed, attempting webhook fallback...', err);
       }
 
-      // 2. Redundant fallback directly to n8n webhook if local returned error
+      // 2. Fallback directly to n8n webhook if local returned error or was unavailable
       if (!data || data.success !== true) {
         try {
           const controller2 = new AbortController();
@@ -1098,7 +1211,7 @@
           throw new Error('response');
         }
 
-        // Fire Google Analytics / MonsterInsights conversion event
+        // Analytics conversion event
         try {
           if (typeof gtag === 'function') {
             gtag('event', 'prequal_form_submit', {
@@ -1113,14 +1226,18 @@
 
         const result = results[data.tier];
         const notice = result.querySelector('[data-email-status]');
-        notice.textContent = data.email_sent === true
-          ? 'Referral email confirmation sent. Please check your inbox and spam folder.'
-          : 'Partner match generated. Confirm your onboarding appointment above.';
+        if (notice) {
+          notice.textContent = data.email_sent === true
+            ? 'The server confirmed the referral email was sent. Check your inbox and spam folder.'
+            : 'Partner match returned. Email sending has not been confirmed; use the partner link above to continue.';
+        }
         const isSummar = data.tier === 'SUMMAR';
         const link = result.querySelector(isSummar ? '#summar-calendar-btn' : '#basicblock-activate-btn');
-        const safeUrl = partnerUrl(isSummar ? data.booking_url : data.activation_url,
-          isSummar ? 'cwlqj04.na1.hs-sales-engage.com' : 'na2.hubs.ly');
-        if (safeUrl) link.href = safeUrl;
+        if (link) {
+          const safeUrl = partnerUrl(isSummar ? data.booking_url : data.activation_url,
+            isSummar ? 'cwlqj04.na1.hs-sales-engage.com' : 'na2.hubs.ly');
+          if (safeUrl) link.href = safeUrl;
+        }
         show(result, true);
         root.querySelector('#prequal-card').scrollIntoView({
           behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
@@ -1130,16 +1247,19 @@
       } catch (err) {
         Object.values(results).forEach(el => show(el, false));
         show(form, true);
-        error.textContent = 'We could not confirm your result. Please check your connection or call (782) 201-5130 before retrying; your submission may have been processed.';
-        error.hidden = false;
-        error.focus();
+        errorBox.textContent = 'We could not confirm your result. Please check your connection or call (782) 201-5130 before retrying; your submission may have been processed.';
+        errorBox.hidden = false;
+        errorBox.focus();
       } finally {
         show(loading, false);
         pending = false;
-        submit.disabled = false;
+        submitBtn.disabled = false;
         form.removeAttribute('aria-busy');
       }
     });
+
+    // Mark initialized only after successful setup
+    form.dataset.prequalInitialized = 'true';
   }
 
   if (document.readyState === 'loading') {
@@ -1149,3 +1269,4 @@
   }
 })();
 </script>
+<!-- /wp:html -->
